@@ -9,3 +9,11 @@ document.getElementById('code').addEventListener('keydown', function (e) {
 x.slice(0, curPos) + '\t' + x.slice(curPos));
   }
 })
+
+window.onload = function () {
+  var editor = CodeMirror.fromTextArea($("#code")[0], {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "javascript",
+  });
+};
