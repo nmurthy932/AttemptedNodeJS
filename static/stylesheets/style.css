@@ -1,0 +1,39 @@
+#code{
+  height: 90%;
+}
+
+#input{
+  margin: 10px;
+}
+
+#input form{
+  height: 100%;
+}
+
+#output{
+  border: 1px solid black;
+  margin: 10px;
+}
+
+#error{
+  color: red;
+}
+
+#noerror{
+  color: black;
+}
+
+#runcode{
+  height: auto;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+html, body{
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}

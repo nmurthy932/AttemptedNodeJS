@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}NodeJS Code{% endblock %}
+{% block stylesheet %}style.css{% endblock %}
+{% block body %}
+  <div class="container-fluid justify-content-center">
+    <div id="runcode" class="row">
+      <div class="col-6" id="input">
+        <form method="post" class="row g-3">
+          <textarea id="code" name="code" class="form-control" placeholder="Enter code here">{{code}}</textarea><br>
+          <input type="submit" name="submit">
+        </form>
+      </div>
+      <div id="output" class="col-5">
+        <pre id="{{errors}}">{{output}}</pre>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script src="/static/javascript/script.js"></script>
+{% endblock %}

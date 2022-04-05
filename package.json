@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "express": "^4.17.3",
+    "nodejs": "^0.0.0"
+  },
+  "name": "attemptednodejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm install express"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
