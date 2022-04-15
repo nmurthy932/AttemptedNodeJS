@@ -1,11 +1,24 @@
 {% extends "base.html" %}
-{% block title %}NodeJS Code{% endblock %}
+{% block header %}
+{{ super() }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.3.2/markdown-it.js" integrity="sha512-D9Tm1Ka4uHM/rVls3BMcbRImlmERZBm1893Yljz60eI3kdc2k0BWL+MWZt8zd8/Vpcjuq9hxEAAoT+Y1W4iFIw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <!-- CodeMirror CDN -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css" crossorigin="anonymous">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js" crossorigin="anonymous"></script>
+{% block title %}
+{{name}}
+{% endblock %}
 {% block stylesheet %}codeStyle.css{% endblock %}
+{% endblock %}
 {% block body %}
   <div class="container-fluid">
     <div id="runcode" class="row d-flex justify-content-evenly">
-      <div id="actions" class="col-12">
+      <div id="actions" class="col-12 d-flex justify-content-evenly align-items-center">
+        <a href="/code">Back to code</a>
+        <input id="docName" value="{{name}}" placeholder="Untitled document" onchange="save()">
         <button type="button" class="btn btn-primary" onclick="runCode()">Run</button>
+        <p id="save">Saved</p>
       </div>
       <div id="leftSide" class="col-6">
         <ul class="nav nav-tabs">
@@ -15,7 +28,7 @@
         </ul>
         <div id="input">
           <form method="post" class="row g-3" id="codeForm">
-            <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here">{{code}}</textarea><br>
+            <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here" oninput="save()">{{code}}</textarea><br>
           </form>
         </div>
       </div>

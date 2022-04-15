@@ -54,3 +54,7 @@ html, body{
   text-align: center;
   background-color: #eef;
 }
+
+#actions p{
+  width: 50px;
+}

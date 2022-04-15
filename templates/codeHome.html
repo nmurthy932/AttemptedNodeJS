@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+  {% block title %}Code - Docs{% endblock %}
+  {% block stylesheet %}codeHomeStyle.css{% endblock %}
+{% block body %}
+  <h1 class="text-center">Projects</h1>
+  <form action="" method="post" class="d-flex justify-content-center">
+    <input type="submit" value="Create New Project">
+  </form>
+  <table class="d-flex justify-content-evenly">
+    <tr class="text-center">
+      <th>Name</th>
+      <th>Author</th>
+      <th>Date Created</th>
+    </tr>
+    {% for things in projects %}
+      <tr class="doc">
+        <td><a href="/code/{{things['docID']}}">{{things['name']}}</a></td>
+        <td>{{things['author']}}</td>
+        <td>{{things['created'][:11]}}</td>
+        <td><button type="button" onclick="deleteProject('{{things['docID']}}', this.id)" id="{{things['id']}}">Delete</button></td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
+{% block scripts %}
+  <script src="/static/javascript/codeHomeScript.js"></script>
+{% endblock %}

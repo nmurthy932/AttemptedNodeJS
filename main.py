@@ -1,8 +1,11 @@
 import subprocess
-from flask import Flask, redirect, render_template, url_for, request
+from flask import Flask, redirect, render_template, url_for, request, jsonify
 import re
 import logging
 import random
+import sqlite3
+import datetime
+import string
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -20,12 +23,50 @@ def getOutput(code):
     error = 'error'
   return p, error
 
-def write_compile(input, markdown):
+def write_compile(input, name, markdown):
   if input == "":
     return render_template('code.html',code=input,output='Please enter some code',errors='error', markdownString=markdown)
   output = getOutput(input)
   codeOutput = output[0].decode()
-  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown)
+  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown, name=name)
+
+def newCodeDocument(user):
+  with get_connection() as con:
+    cursor = con.cursor()
+    docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
+    while(len(cursor.execute('SELECT * FROM nodejs WHERE docID=?',[docID,]).fetchall()) != 0):
+      docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
+    created = datetime.datetime.now()
+    cursor.execute('INSERT INTO nodejs (docID, name, created, author, code, markdown) VALUES (?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, user, '', ''])
+    con.commit()
+    return redirect(url_for('render_code',id=docID))
+
+def getCode(id):
+  with get_connection() as con:
+    cursor = con.cursor()
+    codePage = cursor.execute('SELECT * FROM nodejs WHERE docID=?',[id,]).fetchall()[0]
+    return codePage
+
+##DATABASE STUFF
+
+def get_connection():
+  connection = sqlite3.connect("database.db")
+  connection.row_factory = dict_factory
+  return connection
+
+def dict_factory(cursor, row):
+  d = {}
+  for index, col in enumerate(cursor.description):
+      d[col[0]] = row[index]
+  return d
+
+def create_tables():
+  with get_connection() as con:
+    cursor = con.cursor()
+    cursor.execute('CREATE TABLE IF NOT EXISTS nodejs (id INTEGER PRIMARY KEY, docID TEXT, name TEXT, created TEXT, author TEXT, code TEXT, markdown TEXT)')
+    con.commit()
+    cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, created TEXT)')
+    con.commit()
 
 ##FLASK STUFF BEGINS
 
@@ -36,18 +77,67 @@ app = Flask(
 )
 
 @app.route('/', methods=['POST','GET'])
+def redirect_home():
+  return redirect(url_for('render_home'))
+
+@app.route('/home', methods=['POST','GET'], strict_slashes=False)
 def render_home():
+  create_tables()
   return render_template('home.html')
 
-@app.route('/code', methods=['POST','GET'])
-def render_code():
-  nodeCode = open('./nodeJS/index.js','r').read()
-  markdownString = str(open('./nodeJS/Readme.md','r').read())
+@app.route('/code',methods=['POST','GET'], strict_slashes=False)
+def codeHome():
+  if request.method == 'GET':
+    with get_connection() as con:
+      cursor = con.cursor()
+      projects = cursor.execute('SELECT * FROM nodejs ORDER BY created DESC').fetchall()
+      return render_template('codeHome.html', projects=projects)
+  else:
+    return newCodeDocument('Jim')
+
+@app.route('/code/<id>', methods=['POST','GET'],strict_slashes=False)
+def render_code(id):
+  codePage = getCode(id)
+  nodeCode = codePage['code']
+  markdownString = codePage['markdown']
+  name = codePage['name']
   if request.method == 'GET':
     logging.info("*** Form displayed using GET ***")
-    return render_template('code.html',code=nodeCode,markdownString=markdownString,errors='noerror')
+    return render_template('code.html',name=name,code=nodeCode,markdownString=markdownString,errors='noerror')
   else:
-    return write_compile(str(request.form['code']), markdownString)
+    return write_compile(str(request.form['code']), name, markdownString)
+
+## AJAX FUNCTIONS
+
+@app.route('/update-code', methods=['POST','GET'])
+def udpateCode():
+  if request.method == 'POST':
+    ##text = request.json('text')
+    data = request.get_json()
+    print(data)
+    if data[0]['Name'] == '':
+      data[0]['Name'] = 'Untitled project'
+    with get_connection() as con:
+      cursor = con.cursor()
+      cursor.execute('UPDATE nodejs SET code=? WHERE docID=?', [data[2]['code'], data[1]['docID'],])
+      con.commit()
+      cursor.execute('UPDATE nodejs SET name=? WHERE docID=?', [data[0]['Name'], data[1]['docID'],])
+      con.commit()
+    results = {'processed': 'true', 'title': data[0]['Name']}
+    return jsonify(results)
+  else:
+    return None
+
+@app.route('/delete-project', methods=['POST', 'GET'])
+def deletDoc():
+  if request.method == 'POST':
+    data = request.get_json()
+    with get_connection() as con:
+      cursor = con.cursor()
+      cursor.execute('DELETE FROM nodejs WHERE docID=?', [data[0]['docID'],])
+      con.commit()
+  results = {'processed': 'true'}
+  return jsonify(results)
 
 if __name__ == "__main__":
 	app.run(
