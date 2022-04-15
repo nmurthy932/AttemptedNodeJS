@@ -18,13 +18,46 @@ window.onload = function () {
       lineWrapping: true,
       mode: "javascript",
   });
-  editor.setSize('100%','90%');
+  editor.setSize('100%','95%');
   var output = document.getElementById('output');
   output.style.height = editor.getWrapperElement().offsetHeight;
+  //https://stackoverflow.com/questions/6833914/how-to-prevent-the-confirm-form-resubmission-dialog
+  if ( window.history.replaceState ) {
+    window.history.replaceState( null, null, window.location.href );
+  }
 };
 
 function setOutputStyle(){
   output.setAttribute('overflow-y','auto');
   output.style.margin = "10px";
   output.style.border = "border: 1px solid black;";
+}
+
+function runCode(){
+  document.getElementById('codeForm').submit();
+}
+
+function createMarkdown(string){
+  var md = window.markdownit();
+  var result = md.render(string);
+  $('#markdown').html(result);
+}
+
+function switchTab(string){
+  var md = document.getElementById('markdown');
+  var console = document.getElementById('console');
+  var mdTab = document.getElementById('markdownTab');
+  var consoleTab = document.getElementById('consoleTab')
+  if(string == 'markdown'){
+    console.style.display = 'none';
+    markdown.style.display = 'inline-block';
+    mdTab.setAttribute('class','nav-link active');
+    consoleTab.setAttribute('class','nav-link');
+  }
+  else{
+    console.style.display = 'inline-block';
+    markdown.style.display = 'none';
+    mdTab.setAttribute('class','nav-link');
+    consoleTab.setAttribute('class','nav-link active');
+  }
 }

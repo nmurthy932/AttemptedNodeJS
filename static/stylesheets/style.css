@@ -1,26 +1,25 @@
-#code{
-  height: 89%;
+#markdown{
+  display: none;
 }
 
-#input{
-  margin: 5px;
+#leftSide{
 }
 
 #input form{
-  height: 100%;
+  height: 95%;
 }
 
 #output{
   border: 1px solid #eee;
+  border-top: 0px;
   overflow-y: auto;
-  margin: 5px;
 }
 
-#error{
+.error{
   color: red;
 }
 
-#noerror{
+.noerror{
   color: black;
 }
 
@@ -29,6 +28,8 @@
   position: absolute;
   top: 0;
   bottom: 0;
+  margin-bottom: 0px;
+  max-height: 900px;
 }
 
 html, body{
@@ -36,10 +37,16 @@ html, body{
   height: 100%;
   margin: 0px;
   padding: 0px;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 .CodeMirror {
   border: 1px solid #eee;
+  border-top: 0px;
   max-height: 800px;
+}
+
+#actions{
+  text-align: center;
+  background-color: #eef;
 }
