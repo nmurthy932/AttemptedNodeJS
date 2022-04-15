@@ -6,6 +6,8 @@ import random
 
 logging.basicConfig(level=logging.DEBUG)
 
+##HELPER FUNCTIONS
+
 def getOutput(code):
   file = open('./nodeJS/index.js','w')
   file.write(code);
@@ -20,10 +22,12 @@ def getOutput(code):
 
 def write_compile(input, markdown):
   if input == "":
-    return render_template('home.html',code=input,output='Please enter some code',errors='error', markdownString=markdown)
+    return render_template('code.html',code=input,output='Please enter some code',errors='error', markdownString=markdown)
   output = getOutput(input)
   codeOutput = output[0].decode()
-  return render_template('home.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown)
+  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown)
+
+##FLASK STUFF BEGINS
 
 app = Flask(
 	__name__,
@@ -32,15 +36,18 @@ app = Flask(
 )
 
 @app.route('/', methods=['POST','GET'])
-def base_page():
+def render_home():
+  return render_template('home.html')
+
+@app.route('/code', methods=['POST','GET'])
+def render_code():
   nodeCode = open('./nodeJS/index.js','r').read()
   markdownString = str(open('./nodeJS/Readme.md','r').read())
   if request.method == 'GET':
     logging.info("*** Form displayed using GET ***")
-    return render_template('home.html',code=nodeCode,markdownString=markdownString,errors='noerror')
+    return render_template('code.html',code=nodeCode,markdownString=markdownString,errors='noerror')
   else:
     return write_compile(str(request.form['code']), markdownString)
-
 
 if __name__ == "__main__":
 	app.run(

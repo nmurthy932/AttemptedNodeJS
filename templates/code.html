@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}NodeJS Code{% endblock %}
+{% block stylesheet %}codeStyle.css{% endblock %}
+{% block body %}
+  <div class="container-fluid">
+    <div id="runcode" class="row d-flex justify-content-evenly">
+      <div id="actions" class="col-12">
+        <button type="button" class="btn btn-primary" onclick="runCode()">Run</button>
+      </div>
+      <div id="leftSide" class="col-6">
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <button class="nav-link active" id="inputTab">Node.js</button>
+          </li>
+        </ul>
+        <div id="input">
+          <form method="post" class="row g-3" id="codeForm">
+            <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here">{{code}}</textarea><br>
+          </form>
+        </div>
+      </div>
+      <div id="rightSide" class="col-5">
+        <div id="outputSwitch">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <button class="nav-link active" id="consoleTab" onclick="switchTab('console')">Console</button>
+            </li>
+            <li>
+              <button class="nav-link" id="markdownTab" onclick="switchTab('markdown')">Markdown</button>
+            </li>
+          </ul>
+        </div>
+        <div id="output">
+          <pre class="{{errors}}" id="console">{{output}}</pre>
+          <div id="markdown"></div>
+          <script>
+            function createMarkdown(string){
+              var md = window.markdownit();
+              var result = md.render(string);
+              $('#markdown').html(result);
+            }
+            
+            createMarkdown(`{{markdownString}}`);
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script src="/static/javascript/codeScript.js"></script>
+{% endblock %}

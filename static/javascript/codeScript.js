@@ -21,10 +21,6 @@ window.onload = function () {
   editor.setSize('100%','95%');
   var output = document.getElementById('output');
   output.style.height = editor.getWrapperElement().offsetHeight;
-  //https://stackoverflow.com/questions/6833914/how-to-prevent-the-confirm-form-resubmission-dialog
-  if ( window.history.replaceState ) {
-    window.history.replaceState( null, null, window.location.href );
-  }
 };
 
 function setOutputStyle(){
