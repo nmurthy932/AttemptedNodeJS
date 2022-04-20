@@ -1,5 +1,5 @@
 import subprocess
-from flask import Flask, redirect, render_template, url_for, request, jsonify
+from flask import Flask, redirect, render_template, url_for, request, jsonify, abort
 import re
 import logging
 import random
@@ -44,8 +44,39 @@ def newCodeDocument(user):
 def getCode(id):
   with get_connection() as con:
     cursor = con.cursor()
-    codePage = cursor.execute('SELECT * FROM nodejs WHERE docID=?',[id,]).fetchall()[0]
-    return codePage
+    codePage = cursor.execute('SELECT * FROM nodejs WHERE docID=?',[id,]).fetchall()
+    if len(codePage) != 0:
+      codeInfo = codePage[0]
+    else:
+      abort(404)
+    return codeInfo
+
+##REWRITE THESE!!!!!!
+def valid_user(user):
+  logging.info("in valid_user")
+  try:
+      ret = re.search("^[a-zA-z0-9_-]{3,20}$", user).group(0) == user
+  except AttributeError:
+      ret = False
+  return ret
+
+
+def valid_pass(password):
+  logging.info("in valid_pass")
+  try:
+    ret = re.search('^[\s\S]{3,20}$', password).group(0) == password
+  except AttributeError:
+    ret = False
+  return ret
+
+
+def valid_email(email):
+  logging.info("in valid_email")
+  try:
+    ret = re.search('^\S+@\S+.\S$', email).group(0) == email
+  except AttributeError:
+    ret = False
+  return ret
 
 ##DATABASE STUFF
 
@@ -65,7 +96,7 @@ def create_tables():
     cursor = con.cursor()
     cursor.execute('CREATE TABLE IF NOT EXISTS nodejs (id INTEGER PRIMARY KEY, docID TEXT, name TEXT, created TEXT, author TEXT, code TEXT, markdown TEXT)')
     con.commit()
-    cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, created TEXT)')
+    cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, salt TEXT, created TEXT)')
     con.commit()
 
 ##FLASK STUFF BEGINS
@@ -76,14 +107,27 @@ app = Flask(
 	static_folder='static'
 )
 
+create_tables()
+
 @app.route('/', methods=['POST','GET'])
 def redirect_home():
   return redirect(url_for('render_home'))
 
 @app.route('/home', methods=['POST','GET'], strict_slashes=False)
 def render_home():
-  create_tables()
+  ##create_tables()
   return render_template('home.html')
+
+@app.route('/login', methods=['POST','GET'])
+def login():
+  if request.method == 'POST':
+    email = request.form['email']
+    if not valid_email(email):
+      return render_template('login.html')
+    password = request.form['password']
+    return redirect(url_for('home'))
+  else:
+    return render_template('login.html')
 
 @app.route('/code',methods=['POST','GET'], strict_slashes=False)
 def codeHome():
@@ -114,7 +158,6 @@ def udpateCode():
   if request.method == 'POST':
     ##text = request.json('text')
     data = request.get_json()
-    print(data)
     if data[0]['Name'] == '':
       data[0]['Name'] = 'Untitled project'
     with get_connection() as con:

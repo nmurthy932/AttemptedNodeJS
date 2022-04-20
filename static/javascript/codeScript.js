@@ -67,3 +67,11 @@ function switchTab(string){
     consoleTab.setAttribute('class','nav-link active');
   }
 }
+
+$('#codeForm').on('keyup keypress', function(e) {
+  var keyCode = e.keyCode || e.which;
+  if (keyCode === 13 && !$(document.activeElement).is('textarea')) {
+    e.preventDefault();
+    return false;
+  }
+});
