@@ -1,6 +1,6 @@
-function deleteProject(docID, id){
+function deleteProject(id){
   var server_data = [
-    {"docID": docID}
+    {"docID": document.getElementById('url').href.split('/code/')[1]}
   ];
   $.ajax({
     type: "POST",

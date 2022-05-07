@@ -14,10 +14,10 @@
     </tr>
     {% for things in projects %}
       <tr class="doc">
-        <td><a href="/code/{{things['docID']}}">{{things['name']}}</a></td>
-        <td>{{things['author']}}</td>
+        <td><a href="/code/{{things['docID']}}" id="url">{{things['name']}}</a></td>
+        <td>{{things['email']}}</td>
         <td>{{things['created'][:11]}}</td>
-        <td><button type="button" onclick="deleteProject('{{things['+docID+']}}', this.id)" id="{{things['id']}}">Delete</button></td>
+        <td><button type="button" onclick="deleteProject(this.id)" id="{{things['id']}}">Delete</button></td>
       </tr>
     {% endfor %}
   </table>
