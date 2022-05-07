@@ -3,9 +3,10 @@ from flask import Flask, redirect, render_template, url_for, request, jsonify, a
 import re
 import logging
 import random
-import sqlite3
 import datetime
 import string
+from encrypt import *
+from database import *
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -51,25 +52,6 @@ def getCode(id):
       abort(404)
     return codeInfo
 
-##REWRITE THESE!!!!!!
-def valid_user(user):
-  logging.info("in valid_user")
-  try:
-      ret = re.search("^[a-zA-z0-9_-]{3,20}$", user).group(0) == user
-  except AttributeError:
-      ret = False
-  return ret
-
-
-def valid_pass(password):
-  logging.info("in valid_pass")
-  try:
-    ret = re.search('^[\s\S]{3,20}$', password).group(0) == password
-  except AttributeError:
-    ret = False
-  return ret
-
-
 def valid_email(email):
   logging.info("in valid_email")
   try:
@@ -78,26 +60,47 @@ def valid_email(email):
     ret = False
   return ret
 
-##DATABASE STUFF
-
-def get_connection():
-  connection = sqlite3.connect("database.db")
-  connection.row_factory = dict_factory
-  return connection
-
-def dict_factory(cursor, row):
-  d = {}
-  for index, col in enumerate(cursor.description):
-      d[col[0]] = row[index]
-  return d
-
-def create_tables():
+def valid_pass(password):
+  logging.info("in valid_pass")
+  try:
+    ret = re.search('^[\s\S]{3,20}$', password).group(0) == password
+  except AttributeError:
+    ret = False
+  return ret
+  
+def create_password(email, firstName, lastName, password):
+  if not valid_email(email):
+    return render_template('register.html',error="Invalid email",email=email, firstName=firstName, lastName=lastName)
+  if firstName == "":
+    return render_template('register.html',error="You must enter a first name")
+  if lastName == "":
+    return render_template('register.html',error="You must enter a last name")
+  ##TODO: Add encryption here
+  salt = "".join(random.choices(string.ascii_letters+string.digits, k=10))
+  if password == "":
+    return render_template('register.html',error="You must enter a password")
+  password = hash_str(password+salt)
+  created = datetime.datetime.now()
   with get_connection() as con:
     cursor = con.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS nodejs (id INTEGER PRIMARY KEY, docID TEXT, name TEXT, created TEXT, author TEXT, code TEXT, markdown TEXT)')
+    if len(cursor.execute('SELECT * FROM users WHERE email=?',[email,]).fetchall()) != 0:
+      return render_template('register.html',error="That email is already taken")
+    cursor.execute('INSERT INTO users (email, firstName, lastName, password, salt, created) VALUES (?, ?, ?, ?, ?, ?)', [email, firstName, lastName, password, salt, created,])
     con.commit()
-    cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, salt TEXT, created TEXT)')
-    con.commit()
+  return render_template('register.html',success=True)
+
+def checkLogin(email, password):
+  with get_connection() as con:
+    cursor = con.cursor()
+    results = cursor.execute('SELECT * FROM users WHERE email=?',[email,]).fetchall()
+    if len(results) == 0:
+      return False
+    results = results[0]
+    if check_secure_val(password, results['password'], results['salt']):
+      return True
+    else:
+      return False
+
 
 ##FLASK STUFF BEGINS
 
@@ -122,12 +125,24 @@ def render_home():
 def login():
   if request.method == 'POST':
     email = request.form['email']
-    if not valid_email(email):
-      return render_template('login.html')
     password = request.form['password']
-    return redirect(url_for('home'))
+    if checkLogin(email, password):
+      return redirect(url_for('render_home'))
+    else:
+      return render_template('login.html', error='Invalid username or password')
   else:
     return render_template('login.html')
+
+@app.route('/register',methods=['POST','GET'])
+def register():
+  if request.method == 'POST':
+    email = request.form['email']
+    password = request.form['password']
+    firstName = request.form['firstName']
+    lastName = request.form['lastName']
+    return create_password(email, firstName, lastName, password)
+  else:
+    return render_template("register.html")
 
 @app.route('/code',methods=['POST','GET'], strict_slashes=False)
 def codeHome():

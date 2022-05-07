@@ -7,7 +7,7 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css" crossorigin="anonymous">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js" crossorigin="anonymous"></script>
 {% block title %}
-{{name}}
+{{name}}{{super()}}
 {% endblock %}
 {% block stylesheet %}codeStyle.css{% endblock %}
 {% endblock %}

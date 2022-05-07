@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-  {% block title %}Code - Docs{% endblock %}
+  {% block title %}Code{{super()}}{% endblock %}
   {% block stylesheet %}codeHomeStyle.css{% endblock %}
 {% block body %}
   <h1 class="text-center">Projects</h1>
@@ -17,7 +17,7 @@
         <td><a href="/code/{{things['docID']}}">{{things['name']}}</a></td>
         <td>{{things['author']}}</td>
         <td>{{things['created'][:11]}}</td>
-        <td><button type="button" onclick="deleteProject('{{things['docID']}}', this.id)" id="{{things['id']}}">Delete</button></td>
+        <td><button type="button" onclick="deleteProject('{{things['+docID+']}}', this.id)" id="{{things['id']}}">Delete</button></td>
       </tr>
     {% endfor %}
   </table>

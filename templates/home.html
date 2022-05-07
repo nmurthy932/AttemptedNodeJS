@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Home{{super()}}{% endblock %}
 {% block stylesheet %}homeStyle.css{% endblock %}
 {% block body %}
   <div>
-    <h1>NodeJS Course</h1>
+    <h1>LASAnode</h1>
     <a href="/code">Write some code</a>
   </div>
 {% endblock %}

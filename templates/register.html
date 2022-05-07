@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Register{{super()}}{% endblock %}
+{% block stylesheet %}register.css{% endblock %}
+{% block body %}
+{% if success == True %}
+<p>Your account has been created. You may now login</p>
+{% else %}
+<div class="d-flex justify-content-center align-items-center" id="registerDiv">
+    <form method="post" class="container-fluid">
+        <input type="text" name="email" placeholder="Enter email" class="row form-control col-auto" value="{{email}}">
+        <div class="row">
+            <input type="text" class="form-control col-6" placeholder="First" name="firstName" value="{{firstName}}">
+            <input type="text" class="form-control col-6" placeholder="Last" name="lastName" value="{{lastName}}">
+        </div>
+        <input type="password" name="password" placeholder="Enter password" class="row form-control col-auto">
+        <input type="submit" name="submit" value="Login" class="row col-auto">
+    <p id="error" class="row text-center">{{error}}</p>
+</div>
+{% endif %}
+{% endblock %}
