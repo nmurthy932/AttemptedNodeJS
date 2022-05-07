@@ -72,19 +72,19 @@ def create_password(email, firstName, lastName, password):
   if not valid_email(email):
     return render_template('register.html',error="Invalid email",email=email, firstName=firstName, lastName=lastName)
   if firstName == "":
-    return render_template('register.html',error="You must enter a first name")
+    return render_template('register.html',error="You must enter a first name",email=email, firstName=firstName, lastName=lastName)
   if lastName == "":
-    return render_template('register.html',error="You must enter a last name")
+    return render_template('register.html',error="You must enter a last name",email=email, firstName=firstName, lastName=lastName)
   ##TODO: Add encryption here
   salt = "".join(random.choices(string.ascii_letters+string.digits, k=10))
   if password == "":
-    return render_template('register.html',error="You must enter a password")
+    return render_template('register.html',error="You must enter a password",email=email, firstName=firstName, lastName=lastName)
   password = hash_str(password+salt)
   created = datetime.datetime.now()
   with get_connection() as con:
     cursor = con.cursor()
     if len(cursor.execute('SELECT * FROM users WHERE email=?',[email,]).fetchall()) != 0:
-      return render_template('register.html',error="That email is already taken")
+      return render_template('register.html',error="That email is already taken",email=email, firstName=firstName, lastName=lastName)
     cursor.execute('INSERT INTO users (email, firstName, lastName, password, salt, created) VALUES (?, ?, ?, ?, ?, ?)', [email, firstName, lastName, password, salt, created,])
     con.commit()
   return render_template('register.html',success=True)
@@ -129,7 +129,7 @@ def login():
     if checkLogin(email, password):
       return redirect(url_for('render_home'))
     else:
-      return render_template('login.html', error='Invalid username or password')
+      return render_template('login.html', error='Invalid email or password', email=email)
   else:
     return render_template('login.html')
 
