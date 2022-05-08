@@ -1,5 +1,5 @@
 import subprocess
-from flask import Flask, redirect, render_template, url_for, request, jsonify, abort
+from flask import Flask, redirect, render_template, url_for, request, jsonify, abort, make_response
 import re
 import logging
 import random
@@ -38,7 +38,7 @@ def newCodeDocument(user):
     while(len(cursor.execute('SELECT * FROM nodejs WHERE docID=?',[docID,]).fetchall()) != 0):
       docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     created = datetime.datetime.now()
-    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown) VALUES (?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, user, '', ''])
+    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown) VALUES (?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, getCookieName(), '', ''])
     con.commit()
     return redirect(url_for('render_code',id=docID))
 
@@ -101,6 +101,22 @@ def checkLogin(email, password):
     else:
       return False
 
+def getCookieName():
+  with get_connection() as con:
+    cursor = con.cursor()
+    email = request.cookies.get('user')
+    if email and 'None' not in email:
+      email = email.split('|')[0]
+      results = cursor.execute('SELECT * FROM users WHERE email=?',[email,]).fetchall()
+      if len(results) == 0:
+        return None
+      else:
+        results = results[0]
+        name = results['firstName']+' '+results['lastName']
+        return name
+    else:
+      return None
+
 
 ##FLASK STUFF BEGINS
 
@@ -111,6 +127,18 @@ app = Flask(
 )
 
 create_tables()
+
+@app.before_request
+def ensure_login():
+  routes = ['redirect_home','render_home','login','register','static']
+  cookie = request.cookies.get('user')
+  user = False
+  if cookie and 'None' not in cookie:
+    user = check_email(cookie)
+  if request.endpoint not in routes and not user:
+    resp = make_response(redirect(url_for('login')))
+    resp.set_cookie('user','None')
+    return resp
 
 @app.route('/', methods=['POST','GET'])
 def redirect_home():
@@ -127,7 +155,9 @@ def login():
     email = request.form['email']
     password = request.form['password']
     if checkLogin(email, password):
-      return redirect(url_for('render_home'))
+      resp = make_response(redirect(url_for('render_home')))
+      resp.set_cookie('user',email+'|'+encryptEmail(email))
+      return resp
     else:
       return render_template('login.html', error='Invalid email or password', email=email)
   else:
@@ -200,5 +230,5 @@ def deleteDoc():
 if __name__ == "__main__":
 	app.run(
 		host='0.0.0.0',
-		port=random.randint(2000, 9000)
+		port=3000
     )

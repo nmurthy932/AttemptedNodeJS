@@ -10,10 +10,22 @@ def hash_str(s):
 
 # Take the string with  visits and the hash and return the confirmed results.
 def check_secure_val(s, hash, salt):
-    hash = hash[:4]+hash[14:]
-    # return s if the hash_str(s) equals hash, otherwise return None
-    s = hash_str(s+salt)
-    if s[:4]+s[14:] == hash:
-      return True
-    else:
-      return None
+  hash = hash[:4]+hash[14:]
+  # return s if the hash_str(s) equals hash, otherwise return None
+  s = hash_str(s+salt)
+  if s[:4]+s[14:] == hash:
+    return True
+  else:
+    return None
+
+def encryptEmail(email):
+  return hashlib.md5(str(email).encode("utf-8")).hexdigest()
+
+def check_email(encrypted):
+  encrypted = encrypted.split('|')
+  email = encrypted[0]
+  hash = encrypted [1]
+  if encryptEmail(email) == hash:
+    return True
+  else:
+    return None
