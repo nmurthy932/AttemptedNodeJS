@@ -2,25 +2,31 @@
   {% block title %}Code{{super()}}{% endblock %}
   {% block stylesheet %}codeHomeStyle.css{% endblock %}
 {% block body %}
-  <h1 class="text-center">Projects</h1>
-  <form action="" method="post" class="d-flex justify-content-center">
-    <input type="submit" value="Create New Project">
-  </form>
-  <table class="d-flex justify-content-evenly">
-    <tr class="text-center">
-      <th>Name</th>
-      <th>Author</th>
-      <th>Date Created</th>
-    </tr>
-    {% for things in projects %}
-      <tr class="doc">
-        <td><a href="/code/{{things['docID']}}" id="url">{{things['name']}}</a></td>
-        <td>{{things['email']}}</td>
-        <td>{{things['created'][:11]}}</td>
-        <td><button type="button" onclick="deleteProject(this.id)" id="{{things['id']}}">Delete</button></td>
+<div id="body">
+  <div id="header">
+    <h1 class="text-center">Projects</h1>
+    <form action="" method="post" class="d-flex justify-content-center">
+      <input type="submit" value="Create New Project">
+    </form>
+  </div>
+  <div id="content">
+    <table class="d-flex justify-content-evenly">
+      <tr class="text-center">
+        <th>Name</th>
+        <th>Author</th>
+        <th>Date Created</th>
       </tr>
-    {% endfor %}
-  </table>
+      {% for things in projects %}
+        <tr class="doc">
+          <td><a href="/code/{{things['docID']}}" id="url">{{things['name']}}</a></td>
+          <td>{{things['email']}}</td>
+          <td>{{things['created'][:11]}}</td>
+          <td><button type="button" onclick="deleteProject(this.id)" id="{{things['id']}}">Delete</button></td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
 {% endblock %}
 {% block scripts %}
   <script src="/static/javascript/codeHomeScript.js"></script>

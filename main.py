@@ -14,13 +14,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 def getOutput(code):
   file = open('./nodeJS/index.js','w')
-  file.write(code);
+  file.write(code)
   file.close()
   error = 'noerror'
   try:
     p = subprocess.check_output(['node', './nodeJS/index.js'], stderr=subprocess.STDOUT)
   except subprocess.CalledProcessError as e:
-    p = e.output;
+    p = e.output
     error = 'error'
   return p, error
 
