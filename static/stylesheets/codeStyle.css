@@ -58,3 +58,7 @@ html, body{
 #actions p{
   width: 50px;
 }
+
+#save{
+  margin: auto 0px auto 0px;
+}

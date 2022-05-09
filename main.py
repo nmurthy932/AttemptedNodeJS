@@ -214,7 +214,7 @@ def udpateCode():
     results = {'processed': 'true', 'title': data[0]['Name']}
     return jsonify(results)
   else:
-    return None
+    return redirect(url_for('render_home'))
 
 @app.route('/delete-project', methods=['POST', 'GET'])
 def deleteDoc():
@@ -224,8 +224,10 @@ def deleteDoc():
       cursor = con.cursor()
       cursor.execute('DELETE FROM nodejs WHERE docID=?', [data[0]['docID'],])
       con.commit()
-  results = {'processed': 'true'}
-  return jsonify(results)
+    results = {'processed': 'true'}
+    return jsonify(results)
+  else:
+    return redirect(url_for('render_home'))
 
 if __name__ == "__main__":
 	app.run(

@@ -5,16 +5,32 @@
 {% if success == True %}
 <p>Your account has been created. You may now login</p>
 {% else %}
-<div class="d-flex justify-content-center align-items-center" id="registerDiv">
+<div class="d-flex" id="registerDiv">
     <form method="post" class="container-fluid">
-        <input type="text" name="email" placeholder="Enter email" class="row form-control col-auto" value="{{email}}">
-        <div class="row">
-            <input type="text" class="form-control col-6" placeholder="First" name="firstName" value="{{firstName}}">
-            <input type="text" class="form-control col-6" placeholder="Last" name="lastName" value="{{lastName}}">
+        <div id="logo" class="align-items-start">
+            <h1 class="display-1 text-center"><a href="/home">Ln</a></h1>
         </div>
-        <input type="password" name="password" placeholder="Enter password" class="row form-control col-auto">
-        <input type="submit" name="submit" value="Login" class="row col-auto">
-    <p id="error" class="row text-center">{{error}}</p>
+        <div id="form-data" class="align-items-center">
+            <div class="row p-2">
+                <input type="text" name="email" placeholder="Enter email" class="form form-control" value="{{email}}" id="email">
+            </div>
+            <div class="row p-2 justify-content-between">
+                <div class="col-6" id="name1">
+                    <input type="text" class="form form-control" placeholder="First Name" name="firstName" value="{{firstName}}" id="firstName">
+                </div>
+                <div class="col-6" id="name2">
+                    <input type="text" class="form form-control" placeholder="Last Name" name="lastName" value="{{lastName}}" id="lastName">
+                </div>
+            </div>
+            <div class="row p-2">
+                <input type="password" name="password" placeholder="Enter password" class="form form-control" id="password">
+            </div>
+            <div class="row p-2" id="submit">
+                <input type="submit" name="submit" value="Login" class="btn btn-outline-light btn-block">
+            </div>
+            <p id="error" class="row text-center">{{error}}</p>
+        </div>
+    </form>
 </div>
 {% endif %}
 {% endblock %}
