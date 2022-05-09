@@ -1,8 +1,42 @@
 #error{
     color: red;
+    text-align: center;
 }
 
 #loginDiv{
-    margin: 0px auto 0px auto;
+    width: 100%;
+    height: 100%;
+    background-color: #101A3F;
+    color: #3FDE74;
+}
+
+#form-data{
     width: 50%;
+    margin: 0px auto 0px auto;
+}
+
+#password, #email{
+    background-color: #2E294E;
+    color: #3FDE74;
+}
+
+#logo{
+    padding: 5px;
+    border: 5px solid #3FDE74;
+    width: 50%;
+    margin: 2% auto 5% auto;
+}
+
+#submit{
+    margin-top: 30px;
+}
+
+h1 a {
+    color: #3FDE74;
+    text-decoration: none;
+    
+}
+
+h1 a:hover{
+    color: #3FDE74;
 }
