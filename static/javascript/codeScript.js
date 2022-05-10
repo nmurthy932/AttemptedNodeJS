@@ -1,5 +1,3 @@
-//Code credit: https://www.geeksforgeeks.org/how-to-insert-text-into-the-textarea-at-the-current-cursor-position/#:~:text=First%2C%20get%20the%20current%20position,and%20end%20of%20the%20text.
-
 window.onload = function () {
   var editor = CodeMirror.fromTextArea($("#code")[0], {
       lineNumbers: true,

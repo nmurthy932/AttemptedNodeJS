@@ -2,7 +2,7 @@
     height: 90%;
 }
 
-#header{
+#actions{
     padding: 5px;
     background-color: #eef;
 }
@@ -19,5 +19,18 @@ textarea{
 
 .CodeMirror{
     border: 1px solid #eee;
-    max-height: 650px;
+}
+
+#output{
+    border: 1px solid black;
+    overflow-y: auto;
+    padding: 0px;
+}
+
+#content{
+    color: #3FDE74;
+    background-color: #2E294E;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
 }

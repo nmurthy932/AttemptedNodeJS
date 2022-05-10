@@ -10,7 +10,7 @@
 {% block stylesheet %}lessonEditorStyle.css{% endblock %}
 {% block body %}
 <div class="container-fluid">
-    <div id="header" class="row">
+    <div id="actions" class="row">
         <div class="col-12 d-flex justify-content-evenly align-items-center">
             <a href="/lessons">Back to lessons</a>
             <input id="lessonName" type="text" class="" value="{{title}}" onchange="save()" placeholder="Untitled lesson">
@@ -35,10 +35,15 @@
             </div>
         </div>
     </div>
-    <div id="body" class="row">
-        <form class="d-flex justify-content-center" id="codeForm">
-            <textarea id="content" placeholder="Enter some HTML content" oninput="save()">{{content}}</textarea>
+    <div id="body" class="row d-flex justify-content-evenly">
+        <form class="col-6" id="codeForm">
+            <textarea id="textarea" placeholder="Enter some HTML content" oninput="save()">{{content}}</textarea>
         </form>
+        <div class="col-5" id="output">
+            <div id="content">
+
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

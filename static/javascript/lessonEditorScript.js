@@ -1,5 +1,5 @@
 function save(){
-    var editor = document.getElementById('content').nextSibling.CodeMirror;
+    var editor = document.getElementById('textarea').nextSibling.CodeMirror;
     code = editor.getValue();
     document.getElementById('save').textContent = 'Saving';
     var server_data = [
@@ -14,10 +14,11 @@ function save(){
         contentType: "application/json",
         dataType: 'json',
         success: function(result){
-        document.getElementById('save').textContent = 'Saved';
-        if(document.getElementById('lessonName').value != '')
-            document.getElementById('title').textContent = document.getElementById('lessonName').value+" - LASAnode";
-        else document.getElementById('title').textContent = 'Untitled project';
+            document.getElementById('save').textContent = 'Saved';
+            if(document.getElementById('lessonName').value != '')
+                document.getElementById('title').textContent = document.getElementById('lessonName').value+" - LASAnode";
+            else document.getElementById('title').textContent = 'Untitled project';
+            document.getElementById('content').innerHTML = result['processed'];
         }
     });
 }
@@ -40,7 +41,7 @@ function deleteProject(){
 }
 
 window.onload = function () {
-    var editor = CodeMirror.fromTextArea($("#content")[0], {
+    var editor = CodeMirror.fromTextArea($("#textarea")[0], {
         lineNumbers: true,
         lineWrapping: true,
         mode: "xml",
@@ -48,6 +49,8 @@ window.onload = function () {
     });
     editor.setSize('100%','100%');
     editor.on('change',save);
+    document.getElementById('output').style.height = editor.getWrapperElement().offsetHeight;
+    document.getElementById('content').innerHTML = editor.getValue();
   };
 
   $('#codeForm').on('keyup keypress', function(e) {

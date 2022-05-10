@@ -1,0 +1,20 @@
+#html{
+    color: #3FDE74;
+    background-color: #101A3F;
+    height: 100%;
+}
+
+#header{
+    height: 10%;
+}
+
+#header h1{
+    text-align: center;
+}
+
+#content{
+    color: #3FDE74;
+    background-color: #2E294E;
+    height: 90%;
+    overflow: auto;
+}

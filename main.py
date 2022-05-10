@@ -160,7 +160,7 @@ def updateLesson():
       con.commit()
       cursor.execute('UPDATE lessons SET content=? WHERE docID=?',[data[2]['content'],data[1]['docID'],])
       con.commit()
-    results = {'processed':'true'}
+    results = {'processed':data[2]['content']}
     return jsonify(results)
   else:
     return redirect(url_for('render_home'))
