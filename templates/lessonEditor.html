@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block header %}
+{{ super() }}
+      <!-- CodeMirror CDN -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css" crossorigin="anonymous">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/xml/xml.js" crossorigin="anonymous"></script>
+{% endblock %}
+{% block title %}{{name}}{% endblock %}
+{% block stylesheet %}lessonEditorStyle.css{% endblock %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div id="header" class="col-12 d-flex justify-content-evenly align-items-center">
+            <a href="/lessons">Back to lessons</a>
+            <input id="lessonName" type="text" class="" value="{{title}}" onchange="save()" placeholder="Untitled lesson">
+            <p id="save">Saved</p>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#verificationModal">Delete</button>
+            <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verififcationModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="verificationModalLabel">Are you sure?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            You are about to delete the project: {{title}}. Are you sure you want to do this?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No, I was a fool</button>
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-danger" onclick="deleteProject()">Yes, shut up idiot</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="body" class="row">
+        <form class="d-flex justify-content-center" id="codeForm">
+            <textarea id="content" placeholder="Enter some HTML content" oninput="save()">{{content}}</textarea>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/javascript/lessonEditorScript.js"></script>
+{% endblock %}

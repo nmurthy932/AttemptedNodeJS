@@ -1,0 +1,18 @@
+td, th{
+    padding: 10px;
+    color: #3FDE74;
+  }
+  
+  #body{
+    background-color: #101A3F;
+    color: #3FDE74;
+    height: 100%;
+  }
+  
+  #content{
+    padding: 10px;
+    background-color: #2E294E;
+    color: #3FDE74;
+    height: 70%;
+    overflow: auto;
+  }

@@ -132,7 +132,7 @@ def newLesson():
     created = datetime.datetime.now()
     cursor.execute('INSERT INTO lessons (docID, email, title, content, created) VALUES (?, ?, ?, ?, ?)', [docID, getCookieEmail(), 'Untitled lesson', '', created,])
     con.commit()
-    return redirect(url_for('render_code',id=docID))
+    return redirect(url_for('render_lesson',id=docID))
 
 def getLesson(id):
   with get_connection() as con:

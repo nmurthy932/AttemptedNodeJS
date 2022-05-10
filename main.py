@@ -89,16 +89,21 @@ def render_code(id):
   else:
     return write_compile(str(request.form['code']), name, markdownString)
 
-@app.route('/lesson',methods=['POST','GET'],strict_slashes=False)
+@app.route('/lessons',methods=['POST','GET'],strict_slashes=False)
 def lessonHome():
-  getLesson()
-  return render_template('lessonHome.html')
+  if request.method == 'GET':
+    with get_connection() as con:
+      cursor = con.cursor()
+      lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
+      return render_template('lessonHome.html',lessons=lessons)
+  else:
+    return newLesson()
 
-@app.route('/lesson/<id>',methods=['POST','GET'],strict_slashes=False)
-def render_lesson():
+@app.route('/lessons/<id>/edit',methods=['POST','GET'],strict_slashes=False)
+def render_lesson(id):
   lessonPage = getLesson(id)
   if request.method == "GET":
-    return render_template('lessonEditor.html',email=lessonPage['email'],title=lessonPage['title'],content=lessonPage['content'])
+    return render_template('lessonEditor.html',name=lessonPage['title'],content=lessonPage['content'])
 
 ## AJAX FUNCTIONS
 
@@ -129,6 +134,37 @@ def deleteDoc():
       cursor.execute('DELETE FROM nodejs WHERE docID=?', [data[0]['docID'],])
       con.commit()
     results = {'processed': 'true'}
+    return jsonify(results)
+  else:
+    return redirect(url_for('render_home'))
+
+@app.route('/update-lesson',methods=['POST','GET'])
+def updateLesson():
+  if request.method == 'POST':
+    data = request.get_json()
+    if data[0]['title'] == '':
+      data[0]['title'] = 'Untitled lesson'
+    with get_connection() as con:
+      cursor = con.cursor()
+      cursor.execute('UPDATE lessons SET title=? WHERE docID=?',[data[0]['title'],data[1]['docID'],])
+      con.commit()
+      cursor.execute('UPDATE lessons SET content=? WHERE docID=?',[data[2]['content'],data[1]['docID'],])
+      con.commit()
+    results = {'processed':'true'}
+    return jsonify(results)
+  else:
+    return redirect(url_for('render_home'))
+
+@app.route('/delete-lesson', methods=['POST', 'GET'])
+def deleteLesson():
+  if request.method == 'POST':
+    data = request.get_json()
+    with get_connection() as con:
+      cursor = con.cursor()
+      cursor.execute('DELETE FROM lessons WHERE docID=?', [data[0]['docID'],])
+      con.commit()
+    results = {'processed': url_for('lessonHome')}
+    print(url_for('lessonHome'))
     return jsonify(results)
   else:
     return redirect(url_for('render_home'))
