@@ -6,12 +6,12 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css" crossorigin="anonymous">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/xml/xml.js" crossorigin="anonymous"></script>
 {% endblock %}
-{% block title %}{{name}}{% endblock %}
+{% block title %}{{title}}{% endblock %}
 {% block stylesheet %}lessonEditorStyle.css{% endblock %}
 {% block body %}
 <div class="container-fluid">
-    <div class="row">
-        <div id="header" class="col-12 d-flex justify-content-evenly align-items-center">
+    <div id="header" class="row">
+        <div class="col-12 d-flex justify-content-evenly align-items-center">
             <a href="/lessons">Back to lessons</a>
             <input id="lessonName" type="text" class="" value="{{title}}" onchange="save()" placeholder="Untitled lesson">
             <p id="save">Saved</p>

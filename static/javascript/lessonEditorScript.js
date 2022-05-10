@@ -46,7 +46,7 @@ window.onload = function () {
         mode: "xml",
         htmlMode: true
     });
-    editor.setSize('100%','95%');
+    editor.setSize('100%','100%');
     editor.on('change',save);
   };
 

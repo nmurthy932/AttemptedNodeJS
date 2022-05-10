@@ -18,9 +18,10 @@
       </tr>
       {% for things in lessons %}
         <tr class="doc">
-          <td><a href="/lessons/{{things['docID']}}/edit" id="url">{{things['title']}}</a></td>
+          <td><a href="/lessons/{{things['docID']}}/view" id="url">{{things['title']}}</a></td>
           <td>{{things['email']}}</td>
           <td>{{things['created'][:11]}}</td>
+          <td><a href="/lessons/{{things['docID']}}/edit"><button type="button">Edit</button></a></td>
         </tr>
       {% endfor %}
     </table>

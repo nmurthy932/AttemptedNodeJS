@@ -2,7 +2,22 @@
     height: 90%;
 }
 
+#header{
+    padding: 5px;
+    background-color: #eef;
+}
+
+#save{
+    margin: auto 0px auto 0px;
+    width: 50px;
+}
+
 textarea{
     width: 90%;
     height: 100%;
+}
+
+.CodeMirror{
+    border: 1px solid #eee;
+    max-height: 650px;
 }

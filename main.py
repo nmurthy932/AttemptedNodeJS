@@ -99,11 +99,21 @@ def lessonHome():
   else:
     return newLesson()
 
-@app.route('/lessons/<id>/edit',methods=['POST','GET'],strict_slashes=False)
+@app.route('/lessons/<id>',strict_slashes=False)
+def redirect_lesson(id):
+  return redirect(url_for('render_lesson',id=id))
+
+@app.route('/lessons/<id>/view',methods=['POST','GET'],strict_slashes=False)
 def render_lesson(id):
   lessonPage = getLesson(id)
+  if request.method == 'GET':
+    return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'])
+
+@app.route('/lessons/<id>/edit',methods=['POST','GET'],strict_slashes=False)
+def render_lesson_edit(id):
+  lessonPage = getLesson(id)
   if request.method == "GET":
-    return render_template('lessonEditor.html',name=lessonPage['title'],content=lessonPage['content'])
+    return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'])
 
 ## AJAX FUNCTIONS
 
