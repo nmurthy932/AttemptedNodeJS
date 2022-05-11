@@ -56,6 +56,12 @@ def login():
   else:
     return render_template('login.html')
 
+@app.route('/logout',methods=['POST','GET'])
+def logout():
+  resp = make_response(redirect(url_for('render_home')))
+  resp.set_cookie('user','None')
+  return resp
+
 @app.route('/register',methods=['POST','GET'])
 def register():
   if request.method == 'POST':
@@ -130,7 +136,9 @@ def udpateCode():
       con.commit()
       cursor.execute('UPDATE nodejs SET name=? WHERE docID=?', [data[0]['Name'], data[1]['docID'],])
       con.commit()
-    results = {'processed': 'true', 'title': data[0]['Name']}
+      cursor.execute('UPDATE nodejs SET markdown=? WHERE docID=?', [data[3]['markdown'], data[1]['docID'],])
+      con.commit()
+    results = {'processed': 'true'}
     return jsonify(results)
   else:
     return redirect(url_for('render_home'))
@@ -174,7 +182,6 @@ def deleteLesson():
       cursor.execute('DELETE FROM lessons WHERE docID=?', [data[0]['docID'],])
       con.commit()
     results = {'processed': url_for('lessonHome')}
-    print(url_for('lessonHome'))
     return jsonify(results)
   else:
     return redirect(url_for('render_home'))

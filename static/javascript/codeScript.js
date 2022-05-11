@@ -2,7 +2,7 @@ window.onload = function () {
   var editor = CodeMirror.fromTextArea($("#code")[0], {
       lineNumbers: true,
       lineWrapping: true,
-      mode: "javascript",
+      mode: "javascript"
   });
   var editor2 = CodeMirror.fromTextArea($("#mkdown")[0], {
     lineNumbers: true,
@@ -10,7 +10,7 @@ window.onload = function () {
     mode: "markdown"
   });
   editor.setSize('100%','95%');
-  editor.setSize('100%','95%');
+  editor2.setSize('100%','95%');
   var output = document.getElementById('output');
   output.style.height = editor.getWrapperElement().offsetHeight;
   code = editor.getValue();
@@ -42,7 +42,7 @@ function save(){
       if(document.getElementById('docName').value != '')
         document.getElementById('title').textContent = document.getElementById('docName').value;
       else document.getElementById('title').textContent = 'Untitled project';
-      document.getElementById('markdown').innerHTML = markdownValue;
+      createMarkdown(markdownValue);
     }
   });
 }
@@ -60,25 +60,25 @@ function runCode(){
 
 function switchTab(string){
   if(string == 'markdown' || string == 'console'){
-    var md = document.getElementById('markdown');
-    var console = document.getElementById('console');
+    var markdown = document.getElementById('markdown');
+    var consolething = document.getElementById('console');
     var mdTab = document.getElementById('markdownTab');
     var consoleTab = document.getElementById('consoleTab');
   }
   else{
-    var md = document.getElementById('mkdown');
-    var console = document.getElementById('code');
+    var markdown = document.getElementById('markdownForm');
+    var consolething = document.getElementById('codeForm');
     var mdTab = document.getElementById('markdownEditTab');
     var consoleTab = document.getElementById('inputTab');
   }
-  if(string == 'markdown' || string == 'mkdown'){
-    console.style.display = 'none';
-    markdown.style.display = 'inline-block';
+  if(string == 'markdown' || string == 'markdownEdit'){
+    consolething.style.display = 'none';
+    markdown.style.display = 'block';
     mdTab.setAttribute('class','nav-link active');
     consoleTab.setAttribute('class','nav-link');
   }
   else if(string=='console' || string == 'input'){
-    console.style.display = 'inline-block';
+    consolething.style.display = 'block';
     markdown.style.display = 'none';
     mdTab.setAttribute('class','nav-link');
     consoleTab.setAttribute('class','nav-link active');
@@ -92,3 +92,9 @@ $('#codeForm').on('keyup keypress', function(e) {
     return false;
   }
 });
+
+function createMarkdown(string){
+  var md = window.markdownit();
+  var result = md.render(string);
+  $('#markdown').html(result);
+}

@@ -7,13 +7,11 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css" crossorigin="anonymous">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/markdown/markdown.js" crossorigin="anonymous"></script>
-{% block title %}
-{{name}}{{super()}}
 {% endblock %}
+{% block title %}{{name}}{{super()}}{% endblock %}
 {% block stylesheet %}codeStyle.css{% endblock %}
-{% endblock %}
 {% block body %}
-  <div class="container-fluid">
+  <div class="container-fluid" id="body">
     <div id="runcode" class="row d-flex justify-content-evenly">
       <div id="actions" class="col-12 d-flex justify-content-evenly align-items-center">
         <a href="/code">Back to code</a>
@@ -34,9 +32,9 @@
           <form method="post" class="row g-3" id="codeForm">
             <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here" oninput="save()">{{code}}</textarea><br>
           </form>
-          <div class="row g-3" id="markdownForm">
+          <form method="post" class="row g-3" id="markdownForm">
             <textarea id="mkdown" class="CodeMirror" placeholder="Enter markdown code here" oninput="save()">{{markdownString}}</textarea>
-          </div>
+          </form>
         </div>
       </div>
       <div id="rightSide" class="col-5">

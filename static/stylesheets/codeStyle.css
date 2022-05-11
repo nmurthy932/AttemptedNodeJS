@@ -1,4 +1,4 @@
-#markdown{
+#markdown, #mkdown, #markdownForm{
   display: none;
 }
 
@@ -26,19 +26,11 @@
 
 #runcode{
   width: 100%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  
   margin-bottom: 0px;
-  max-height: 900px;
-}
-
-html, body{
-  width: 100%;
+  background-color: #101A3F;
+  color: #3FDE74;
   height: 100%;
-  margin: 0px;
-  padding: 0px;
-  overflow-y: auto;
 }
 
 .CodeMirror {
