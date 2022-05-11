@@ -6,6 +6,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.js" crossorigin="anonymous"></script>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/codemirror.css" crossorigin="anonymous">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/javascript/javascript.js" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/mode/markdown/markdown.js" crossorigin="anonymous"></script>
 {% block title %}
 {{name}}{{super()}}
 {% endblock %}
@@ -23,13 +24,19 @@
       <div id="leftSide" class="col-6">
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <button class="nav-link active" id="inputTab">Node.js</button>
+            <button class="nav-link active" id="inputTab" onclick="switchTab('input')">Node.js</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="markdownEditTab" onclick="switchTab('markdownEdit')">Edit Markdown</button>
           </li>
         </ul>
         <div id="input">
           <form method="post" class="row g-3" id="codeForm">
             <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here" oninput="save()">{{code}}</textarea><br>
           </form>
+          <div class="row g-3" id="markdownForm">
+            <textarea id="mkdown" class="CodeMirror" placeholder="Enter markdown code here" oninput="save()">{{markdownString}}</textarea>
+          </div>
         </div>
       </div>
       <div id="rightSide" class="col-5">
