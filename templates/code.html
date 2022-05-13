@@ -19,47 +19,49 @@
         <button type="button" class="btn btn-primary" onclick="runCode()">Run</button>
         <p id="save">Saved</p>
       </div>
-      <div id="leftSide" class="col-6">
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <button class="nav-link active" id="inputTab" onclick="switchTab('input')">Node.js</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" id="markdownEditTab" onclick="switchTab('markdownEdit')">Edit Markdown</button>
-          </li>
-        </ul>
-        <div id="input">
-          <form method="post" class="row g-3" id="codeForm">
-            <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here" oninput="save()">{{code}}</textarea><br>
-          </form>
-          <form method="post" class="row g-3" id="markdownForm">
-            <textarea id="mkdown" class="CodeMirror" placeholder="Enter markdown code here" oninput="save()">{{markdownString}}</textarea>
-          </form>
-        </div>
-      </div>
-      <div id="rightSide" class="col-5">
-        <div id="outputSwitch">
+      <div id="content" class="row d-flex justify-content-evenly">
+        <div id="leftSide" class="col-6">
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <button class="nav-link active" id="consoleTab" onclick="switchTab('console')">Console</button>
+              <button class="nav-link active" id="inputTab" onclick="switchTab('input')">Node.js</button>
             </li>
-            <li>
-              <button class="nav-link" id="markdownTab" onclick="switchTab('markdown')">Markdown</button>
+            <li class="nav-item">
+              <button class="nav-link" id="markdownEditTab" onclick="switchTab('markdownEdit')">Edit Markdown</button>
             </li>
           </ul>
+          <div id="input">
+            <form method="post" class="row g-3" id="codeForm">
+              <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here" oninput="save()">{{code}}</textarea><br>
+            </form>
+            <form method="post" class="row g-3" id="markdownForm">
+              <textarea id="mkdown" class="CodeMirror" placeholder="Enter markdown code here" oninput="save()">{{markdownString}}</textarea>
+            </form>
+          </div>
         </div>
-        <div id="output">
-          <pre class="{{errors}}" id="console">{{output}}</pre>
-          <div id="markdown"></div>
-          <script>
-            function createMarkdown(string){
-              var md = window.markdownit();
-              var result = md.render(string);
-              $('#markdown').html(result);
-            }
-            
-            createMarkdown(`{{markdownString}}`);
-          </script>
+        <div id="rightSide" class="col-5">
+          <div id="outputSwitch">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <button class="nav-link active" id="consoleTab" onclick="switchTab('console')">Console</button>
+              </li>
+              <li>
+                <button class="nav-link" id="markdownTab" onclick="switchTab('markdown')">Markdown</button>
+              </li>
+            </ul>
+          </div>
+          <div id="output">
+            <pre class="{{errors}}" id="console">{{output}}</pre>
+            <div id="markdown"></div>
+            <script>
+              function createMarkdown(string){
+                var md = window.markdownit();
+                var result = md.render(string);
+                $('#markdown').html(result);
+              }
+              
+              createMarkdown(`{{markdownString}}`);
+            </script>
+          </div>
         </div>
       </div>
     </div>

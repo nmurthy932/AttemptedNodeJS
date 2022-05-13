@@ -1,10 +1,13 @@
 #body{
-    height: 90%;
+    height: 95%;
+    background-color: #101A3F;
+    color: #3FDE74;
 }
 
 #actions{
     padding: 5px;
     background-color: #eef;
+    height: 5%;
 }
 
 #save{
@@ -19,6 +22,19 @@ textarea{
 
 .CodeMirror{
     border: 1px solid #eee;
+}
+
+.CodeMirror.cm-s-default.CodeMirror-wrap{
+    padding-left: 0px;
+    color: white;
+  }
+  
+.CodeMirror-cursor{
+    border-color: white;
+}
+
+.CodeMirror-scroll{
+    background-color: #2E294E;
 }
 
 #output{

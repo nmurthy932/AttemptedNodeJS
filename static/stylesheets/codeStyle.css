@@ -1,5 +1,18 @@
-#markdown, #mkdown::after{
+#markdown{
   display: none;
+}
+
+#body{
+  padding: 0px;
+  height: 100%;
+}
+
+#content{
+  height: 95%;
+}
+
+#leftSide, #rightSide{
+  height: 100%;
 }
 
 #input form{
@@ -27,8 +40,7 @@
 
 #runcode{
   width: 100%;
-  
-  margin-bottom: 0px;
+  margin: 0px;
   background-color: #101A3F;
   color: #3FDE74;
   height: 100%;
@@ -37,11 +49,10 @@
 .CodeMirror {
   border: 1px solid #eee;
   border-top: 0px;
-  max-height: 700px;
 }
 
 .CodeMirror.cm-s-default.CodeMirror-wrap{
-  padding-left: 0px;
+  padding: 0px;
   color: white;
 }
 
@@ -52,6 +63,7 @@
 #actions{
   text-align: center;
   background-color: #eef;
+  height: 5%;
 }
 
 #actions p{

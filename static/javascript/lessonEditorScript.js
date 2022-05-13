@@ -47,7 +47,7 @@ window.onload = function () {
         mode: "xml",
         htmlMode: true
     });
-    editor.setSize('100%','100%');
+    editor.setSize('100%','95%');
     editor.on('change',save);
     document.getElementById('output').style.height = editor.getWrapperElement().offsetHeight;
     document.getElementById('content').innerHTML = editor.getValue();
@@ -60,3 +60,11 @@ window.onload = function () {
       return false;
     }
   });
+
+  function resizeOutput(){
+    var editor = document.getElementById('textarea').nextSibling.CodeMirror;
+    var output = document.getElementById('output');
+    output.style.height = editor.getWrapperElement().offsetHeight;
+  }
+  
+  window.onresize = resizeOutput;

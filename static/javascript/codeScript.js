@@ -16,6 +16,9 @@ window.onload = function () {
   
   editor.on('change',save);
   editor2.on('change',save);
+
+  switchTab('input');
+  switchTab('console');
 };
 
 function save(){
@@ -97,3 +100,11 @@ function createMarkdown(string){
   var result = md.render(string);
   $('#markdown').html(result);
 }
+
+function resizeOutput(){
+  var editor = document.getElementById('code').nextSibling.CodeMirror;
+  var output = document.getElementById('output');
+  output.style.height = editor.getWrapperElement().offsetHeight;
+}
+
+window.onresize = resizeOutput;
