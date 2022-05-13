@@ -23,9 +23,10 @@ def encryptEmail(email):
 
 def check_email(encrypted):
   encrypted = encrypted.split('|')
-  email = encrypted[0]
-  hash = encrypted [1]
-  if encryptEmail(email) == hash:
-    return True
+  if len(encrypted) > 1:
+    email = encrypted[0]
+    hash = encrypted [1]
+    if encryptEmail(email) == hash:
+      return True
   else:
-    return None
+    return False

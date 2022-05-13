@@ -54,6 +54,8 @@ def login():
     else:
       return render_template('login.html', error='Invalid email or password', email=email)
   else:
+    if request.cookies.get('user') != None and check_email(request.cookies.get('user')):
+      return redirect(url_for('render_home'))
     return render_template('login.html')
 
 @app.route('/logout',methods=['POST','GET'])
