@@ -10,6 +10,7 @@
   border: 1px solid #eee;
   border-top: 0px;
   overflow-y: auto;
+  background-color: #2E294E;
 }
 
 #console{
@@ -39,6 +40,10 @@
   max-height: 700px;
 }
 
+.CodeMirror.cm-s-default.CodeMirror-wrap{
+  padding-left: 0px;
+}
+
 #actions{
   text-align: center;
   background-color: #eef;
@@ -50,4 +55,8 @@
 
 #save{
   margin: auto 0px auto 0px;
+}
+
+.CodeMirror-scroll{
+  background-color: #2E294E;
 }
