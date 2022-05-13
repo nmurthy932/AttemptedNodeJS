@@ -13,7 +13,6 @@ window.onload = function () {
   editor2.setSize('100%','95%');
   var output = document.getElementById('output');
   output.style.height = editor.getWrapperElement().offsetHeight;
-  code = editor.getValue();
   
   editor.on('change',save);
   editor2.on('change',save);

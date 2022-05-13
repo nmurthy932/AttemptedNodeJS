@@ -1,4 +1,4 @@
-#markdown, #mkdown, #markdownForm{
+#markdown, #mkdown::after{
   display: none;
 }
 
@@ -42,6 +42,11 @@
 
 .CodeMirror.cm-s-default.CodeMirror-wrap{
   padding-left: 0px;
+  color: white;
+}
+
+.CodeMirror-cursor{
+  border-color: white;
 }
 
 #actions{
