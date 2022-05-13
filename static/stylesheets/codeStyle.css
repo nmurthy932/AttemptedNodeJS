@@ -35,7 +35,7 @@
 }
 
 .noerror{
-  color: black;
+  color: white;
 }
 
 #runcode{
@@ -64,6 +64,7 @@
   text-align: center;
   background-color: #eef;
   height: 5%;
+  color: black;
 }
 
 #actions p{

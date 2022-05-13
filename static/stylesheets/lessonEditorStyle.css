@@ -1,13 +1,14 @@
 #body{
-    height: 95%;
+    height: 94%;
     background-color: #101A3F;
     color: #3FDE74;
+    padding: 5px;
 }
 
 #actions{
     padding: 5px;
     background-color: #eef;
-    height: 5%;
+    height: 6%;
 }
 
 #save{
@@ -21,16 +22,16 @@ textarea{
 }
 
 .CodeMirror{
-    border: 1px solid #eee;
+    border: 1px solid black;
 }
 
 .CodeMirror.cm-s-default.CodeMirror-wrap{
     padding-left: 0px;
     color: white;
+    background: black;
   }
   
 .CodeMirror-cursor{
-    border-color: white;
 }
 
 .CodeMirror-scroll{

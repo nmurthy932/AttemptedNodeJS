@@ -47,7 +47,7 @@ window.onload = function () {
         mode: "xml",
         htmlMode: true
     });
-    editor.setSize('100%','95%');
+    editor.setSize('100%','97%');
     editor.on('change',save);
     document.getElementById('output').style.height = editor.getWrapperElement().offsetHeight;
     document.getElementById('content').innerHTML = editor.getValue();

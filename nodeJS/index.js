@@ -1,2 +1,1 @@
-console.log('hello')
-Cowabunga
+console.log('hello')
