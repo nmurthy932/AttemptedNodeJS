@@ -34,7 +34,7 @@ def newCodeDocument():
     while(len(cursor.execute('SELECT * FROM nodejs WHERE docID=?',[docID,]).fetchall()) != 0):
       docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     created = datetime.datetime.now()
-    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown) VALUES (?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, getCookieName(), '', ''])
+    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown, linkedLesson) VALUES (?, ?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, getCookieName(), '', '', '',])
     con.commit()
     return redirect(url_for('render_code',id=docID))
 
@@ -134,12 +134,14 @@ def newLesson():
     con.commit()
     return redirect(url_for('render_lesson_edit',id=docID))
 
-def getLesson(id):
+def getLesson(id, linked=False):
   with get_connection() as con:
     cursor = con.cursor()
     lessonPage = cursor.execute('SELECT * FROM lessons WHERE docID=?',[id,]).fetchall()
     if len(lessonPage) != 0:
       lessonInfo = lessonPage[0]
-    else:
+    elif not linked:
       abort(404)
+    else:
+      lessonInfo = None
     return lessonInfo

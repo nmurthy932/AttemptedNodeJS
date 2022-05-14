@@ -30,9 +30,6 @@ textarea{
     color: white;
     background: black;
   }
-  
-.CodeMirror-cursor{
-}
 
 .CodeMirror-scroll{
     background-color: #2E294E;

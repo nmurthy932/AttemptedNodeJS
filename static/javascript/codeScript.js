@@ -107,4 +107,46 @@ function resizeOutput(){
   output.style.height = editor.getWrapperElement().offsetHeight;
 }
 
+function setSelectedLesson(id){
+  var server_data = [
+    {"lessonID": id},
+    {"codeID": window.location.href.split('/code/')[1]}
+  ];
+  $.ajax({
+    type: "POST",
+    url: "/link-lesson",
+    data: JSON.stringify(server_data),
+    contentType: "application/json",
+    dataType: 'json',
+    success: function(result){
+      console.log(result);
+      document.getElementById('isLesson').style.display = 'inline-block';
+      document.getElementById('isLesson2').style.display = 'inline-block';
+      document.getElementById('isLesson2').href = '/lessons/'+id+'/edit';
+      document.getElementById('htmlTitle').textContent = result['title'];
+      document.getElementById('htmlContent').innerHTML = result['content'];
+    }
+  });
+}
+
+function removeSelectedLesson(){
+  var server_data = [
+    {"codeID": window.location.href.split('/code/')[1]}
+  ];
+  $.ajax({
+    type: "POST",
+    url: "/unlink-lesson",
+    data: JSON.stringify(server_data),
+    contentType: "application/json",
+    dataType: 'json',
+    success: function(result){
+      console.log(result);
+      document.getElementById('isLesson').style.display = 'none';
+      document.getElementById('isLesson2').style.display = 'none';
+      document.getElementById('htmlTitle').textContent = result['title']
+      document.getElementById('htmlContent').innerHTML = result['html'];
+    }
+  });
+}
+
 window.onresize = resizeOutput;

@@ -91,9 +91,21 @@ def render_code(id):
   nodeCode = codePage['code']
   markdownString = codePage['markdown']
   name = codePage['name']
+  lesson = getLesson(codePage['linkedLesson'], True)
+  if lesson != None:
+    html = lesson['content']
+    title = lesson['title']
+    isLesson = lesson['docID']
+  else:
+    with get_connection() as con:
+      cursor = con.cursor()
+      lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
+      html = render_template('lessonSelect.html',lessons=lessons)
+      title = 'Choose a lesson to link'
+      isLesson = ''
   if request.method == 'GET':
     logging.info("*** Form displayed using GET ***")
-    return render_template('code.html',name=name,code=nodeCode,markdownString=markdownString,errors='noerror')
+    return render_template('code.html',name=name,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson)
   else:
     return write_compile(str(request.form['code']), name, markdownString)
 
@@ -185,6 +197,37 @@ def deleteLesson():
       con.commit()
     results = {'processed': url_for('lessonHome')}
     return jsonify(results)
+  else:
+    return redirect(url_for('render_home'))
+
+@app.route('/link-lesson', methods=['POST','GET'])
+def linkLesson():
+  if request.method == 'POST':
+    data = request.get_json()
+    with get_connection() as con:
+      cursor = con.cursor()
+      cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[data[0]['lessonID'], data[1]['codeID'],])
+      con.commit()
+    lesson = getLesson(data[0]['lessonID'], True)
+    results = {'title': lesson['title'], 'content': lesson['content']}
+    return jsonify(results)
+  else:
+    return redirect(url_for('render_home'))
+
+@app.route('/unlink-lesson', methods=['POST','GET'])
+def unlinkLesson():
+  if request.method == 'POST':
+    data = request.get_json()
+    with get_connection() as con:
+      cursor = con.cursor()
+      cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',['', data[0]['codeID'],])
+      con.commit()
+      lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
+      html = render_template('lessonSelect.html',lessons=lessons)
+      title = 'Choose a lesson to link'
+      isLesson = ''
+      results = {'title': title, 'html': html, 'isLesson': isLesson}
+      return jsonify(results)
   else:
     return redirect(url_for('render_home'))
 

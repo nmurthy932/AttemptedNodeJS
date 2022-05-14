@@ -1,0 +1,19 @@
+<div id="selectBody">
+  <div id="selectHtmlContent">
+    <table class="d-flex justify-content-evenly">
+      <tr class="text-center">
+        <th>Name</th>
+        <th>Author</th>
+        <th>Date Created</th>
+      </tr>
+      {% for things in lessons %}
+        <tr class="doc">
+          <td><a href="/lessons/{{things['docID']}}/view" target="_blank">{{things['title']}}</a></td>
+          <td>{{things['email']}}</td>
+          <td>{{things['created'][:11]}}</td>
+          <td><button type="button" id="{{things['docID']}}" onclick="setSelectedLesson(this.id)">Select</button></td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>

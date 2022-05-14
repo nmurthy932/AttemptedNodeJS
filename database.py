@@ -14,7 +14,7 @@ def dict_factory(cursor, row):
 def create_tables():
   with get_connection() as con:
     cursor = con.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS nodejs (id INTEGER PRIMARY KEY, docID TEXT, name TEXT, created TEXT, email TEXT, code TEXT, markdown TEXT)')
+    cursor.execute('CREATE TABLE IF NOT EXISTS nodejs (id INTEGER PRIMARY KEY, docID TEXT, name TEXT, created TEXT, email TEXT, code TEXT, markdown TEXT, linkedLesson TEXT)')
     con.commit()
     cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, email TEXT, firstName TEXT, lastName TEXT, password TEXT, salt TEXT, created TEXT)')
     con.commit()
