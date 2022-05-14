@@ -16,13 +16,13 @@
       <div id="actions" class="col-12 d-flex justify-content-evenly align-items-center">
         <a href="/code">Back to code</a>
         <input id="docName" value="{{name}}" placeholder="Untitled document" onchange="save()">
-        <button type="button" class="btn btn-primary btn-sm" onclick="runCode()">Run</button>
+        <button type="button" class="btn btn-primary btn-lg" onclick="runCode()">Run</button>
         <p id="save">Saved</p>
       </div>
       <div id="content" class="row d-flex justify-content-between">
         <ul class="nav flex-column col-1" id="sidebarMenu">
           <li class="nav-item">
-            <a class="nav-link active"><button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">Toggle top offcanvas</button></a>
+            <a class="nav-link active"><button class="btn btn-primary" id="lesson" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLeft">Lesson</button></a>
           </li>
           <li class="nav-item">
             <a class="nav-link active"><i class="fas fa-building fa-fw me-3">Things</i></a>
@@ -76,17 +76,25 @@
   </div>
 
 <!--Offcanvas Stuff-->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel">
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasLeft" data-bs-scroll="true" data-bs-backdrop="false">
     <div class="offcanvas-header" id="selectHeader">
       <div class="d-flex align-items-center">
-        <h1 id="htmlTitle">{{title}}</h1>
+        <h1 id="htmlTitle" class="text-center">{{title}}</h1>
       </div>
       {% if isLesson != '' %}
         <button type="button" id="isLesson" onclick="removeSelectedLesson()">Unlink Lesson</button>
         <button type="button" id="isLesson2"><a href="/lessons/{{isLesson}}/edit" target="_blank">Edit Lesson</a></button>
+        <form action="/lessons" method="post" id="newLessonForm" style="display: none;">
+          <input type="input" value="{{id}}" name="id" style="display: none;">
+          <input type="submit" name="submit" value="Create New Linked Lesson">
+        </form>
       {% else %}
         <button type="button" id="isLesson" style="display: none;" onclick="removeSelectedLesson()">Unlink Lesson</button>
         <button type="button" id="isLesson2" style="display: none;"><a href="/lessons/{{isLesson}}/edit" target="_blank">Edit Lesson</a></button>
+        <form action="/lessons" method="post" class="d-flex justify-content-center" id="newLessonForm">
+          <input type="input" value="{{id}}" name="id" style="display: none;">
+          <input type="submit" name="submit" value="Create New Linked Lesson">
+        </form>
       {% endif %}
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>

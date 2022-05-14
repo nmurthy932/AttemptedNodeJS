@@ -19,6 +19,14 @@ window.onload = function () {
 
   switchTab('input');
   switchTab('console');
+
+  if(window.location.href.split('#').length > 1){
+    var urlEnd = window.location.href.split('#')[1];
+    if(urlEnd == 'lesson'){
+      console.log('GOT HERE');
+      $('#lesson').click();
+    }
+  }
 };
 
 function save(){
@@ -122,6 +130,7 @@ function setSelectedLesson(id){
       console.log(result);
       document.getElementById('isLesson').style.display = 'inline-block';
       document.getElementById('isLesson2').style.display = 'inline-block';
+      document.getElementById('newLessonForm').style.display = 'none';
       document.getElementById('isLesson2').href = '/lessons/'+id+'/edit';
       document.getElementById('htmlTitle').textContent = result['title'];
       document.getElementById('htmlContent').innerHTML = result['content'];
@@ -143,6 +152,7 @@ function removeSelectedLesson(){
       console.log(result);
       document.getElementById('isLesson').style.display = 'none';
       document.getElementById('isLesson2').style.display = 'none';
+      document.getElementById('newLessonForm').style.display = 'inline-block';
       document.getElementById('htmlTitle').textContent = result['title']
       document.getElementById('htmlContent').innerHTML = result['html'];
     }

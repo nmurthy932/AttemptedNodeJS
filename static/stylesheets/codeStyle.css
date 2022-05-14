@@ -10,7 +10,7 @@
 }
 
 #content{
-  height: 95%;
+  height: 93%;
   padding: 0px;
 }
 
@@ -65,7 +65,7 @@
 #actions{
   text-align: center;
   background-color: #eef;
-  height: 5%;
+  height: 7%;
   color: black;
 }
 
@@ -86,7 +86,8 @@
 }
 
 .offcanvas.offcanvas-start.show{
-  width: 100%;
+  width: 92%;
+  left: 8%;
 }
 
 #html{

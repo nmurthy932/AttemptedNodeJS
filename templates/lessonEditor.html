@@ -15,6 +15,9 @@
             <a href="/lessons">Back to lessons</a>
             <input id="lessonName" type="text" class="" value="{{title}}" onchange="save()" placeholder="Untitled lesson">
             <p id="save">Saved</p>
+            {% if codeID != None %}
+            <button type="button"><a href="/code/{{codeID}}">Linked Code</a></button>
+            {% endif %}
             <button type="button" data-bs-toggle="modal" data-bs-target="#verificationModal">Delete</button>
             <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verififcationModalLabel" aria-hidden="true">
                 <div class="modal-dialog">

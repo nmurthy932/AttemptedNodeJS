@@ -123,7 +123,7 @@ def getCookieEmail():
     else:
       return None
 
-def newLesson():
+def newLesson(id=None):
   with get_connection() as con:
     cursor = con.cursor()
     docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
@@ -132,6 +132,10 @@ def newLesson():
     created = datetime.datetime.now()
     cursor.execute('INSERT INTO lessons (docID, email, title, content, created) VALUES (?, ?, ?, ?, ?)', [docID, getCookieEmail(), 'Untitled lesson', '', created,])
     con.commit()
+    if id!=None:
+      print(id, docID)
+      cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[docID, id,])
+      con.commit()
     return redirect(url_for('render_lesson_edit',id=docID))
 
 def getLesson(id, linked=False):

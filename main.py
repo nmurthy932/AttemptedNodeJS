@@ -105,7 +105,7 @@ def render_code(id):
       isLesson = ''
   if request.method == 'GET':
     logging.info("*** Form displayed using GET ***")
-    return render_template('code.html',name=name,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson)
+    return render_template('code.html',name=name,id=id,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson)
   else:
     return write_compile(str(request.form['code']), name, markdownString)
 
@@ -117,6 +117,9 @@ def lessonHome():
       lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
       return render_template('lessonHome.html',lessons=lessons)
   else:
+    if request.form['submit'] == 'Create New Linked Lesson':
+      print(request.form['id'])
+      return newLesson(request.form['id'])
     return newLesson()
 
 @app.route('/lessons/<id>',strict_slashes=False)
@@ -133,7 +136,14 @@ def render_lesson(id):
 def render_lesson_edit(id):
   lessonPage = getLesson(id)
   if request.method == "GET":
-    return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'])
+    with get_connection() as con:
+      cursor = con.cursor()
+      linkedCode = cursor.execute('SELECT docID FROM nodejs WHERE linkedLesson=?', [id,]).fetchall()
+      if linkedCode != []:
+        linkedCode = linkedCode[0]['docID']
+      else:
+        linkedCode = None
+      return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'],codeID=linkedCode)
 
 ## AJAX FUNCTIONS
 
@@ -194,6 +204,8 @@ def deleteLesson():
     with get_connection() as con:
       cursor = con.cursor()
       cursor.execute('DELETE FROM lessons WHERE docID=?', [data[0]['docID'],])
+      con.commit()
+      cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE linkedLesson=?', ['',data[0]['docID'],])
       con.commit()
     results = {'processed': url_for('lessonHome')}
     return jsonify(results)
