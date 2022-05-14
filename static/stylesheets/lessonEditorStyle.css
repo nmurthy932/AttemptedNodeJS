@@ -52,8 +52,9 @@ textarea{
 /* codeSelect stuff */
 
 .offcanvas.offcanvas-start.show{
-    width: 92%;
-    left: 8%;
+    width: 100%;
+    top: 6%;
+    height: 94%;
   }
   
   #html{

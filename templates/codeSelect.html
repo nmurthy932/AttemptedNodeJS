@@ -8,7 +8,7 @@
       </tr>
       {% for things in projects %}
         <tr class="doc">
-          <td><a href="/lessons/{{things['docID']}}/view" target="_blank">{{things['name']}}</a></td>
+          <td><a href="/code/{{things['docID']}}" target="_blank">{{things['name']}}</a></td>
           <td>{{things['email']}}</td>
           <td>{{things['created'][:11]}}</td>
           <td><button type="button" id="{{things['docID']}}" onclick="setSelectedLesson(this.id)">Select</button></td>

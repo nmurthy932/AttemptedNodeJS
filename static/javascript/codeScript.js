@@ -115,6 +115,7 @@ function resizeOutput(){
 }
 
 function setSelectedLesson(id){
+  console.log(id);
   var server_data = [
     {"lessonID": id},
     {"codeID": window.location.href.split('/code/')[1]}
@@ -126,10 +127,11 @@ function setSelectedLesson(id){
     contentType: "application/json",
     dataType: 'json',
     success: function(result){
+      console.log(id);
       document.getElementById('isLesson').style.display = 'inline-block';
       document.getElementById('isLesson2').style.display = 'inline-block';
       document.getElementById('newLessonForm').style.display = 'none';
-      document.getElementById('isLesson2').href = '/lessons/'+id+'/edit';
+      document.getElementById('isLesson2').childNodes[0].href = '/lessons/'+id+'/edit';
       document.getElementById('htmlTitle').textContent = result['title'];
       document.getElementById('htmlContent').innerHTML = result['content'];
     }
