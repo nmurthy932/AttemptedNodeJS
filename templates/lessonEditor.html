@@ -15,6 +15,7 @@
             <a href="/lessons">Back to lessons</a>
             <input id="lessonName" type="text" class="" value="{{title}}" onchange="save()" placeholder="Untitled lesson">
             <p id="save">Saved</p>
+            <button><a href="/lessons/{{lessonID}}/view">View Lesson</a></button>
             {% if codeID != None %}
             <button type="button"><a href="/code/{{codeID}}">Linked Code</a></button>
             <button type="button" id="{{codeID}}" onclick="removeSelectedLesson(this.id)">Unlink Code</button>
@@ -53,7 +54,7 @@
     </div>
 </div>
 
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasLeft" data-bs-scroll="true" data-bs-backdrop="false">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasLeft" data-bs-scroll="true" data-bs-backdrop="false">
     <div class="offcanvas-header" id="selectHeader">
       <div class="d-flex align-items-center">
         <h1 id="htmlTitle" class="text-center">{{name}}</h1>

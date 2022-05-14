@@ -85,7 +85,7 @@
   background-color: white;
 }
 
-.offcanvas.offcanvas-start.show{
+.offcanvas.offcanvas-end{
   width: 92%;
   left: 8%;
 }

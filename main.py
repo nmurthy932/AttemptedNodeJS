@@ -131,8 +131,18 @@ def redirect_lesson(id):
 @app.route('/lessons/<id>/view',methods=['POST','GET'],strict_slashes=False)
 def render_lesson(id):
   lessonPage = getLesson(id)
+  if lessonPage['linked'] == 'True':
+    with get_connection() as con:
+      cursor = con.cursor()
+      codeLink = cursor.execute('SELECT docID FROM nodejs WHERE linkedLesson=?',[id,]).fetchall()
+      if codeLink != []:
+        codeLink = codeLink[0]['docID']
+      else:
+        codeLink = None
+  else:
+    codeLink = None
   if request.method == 'GET':
-    return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'])
+    return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'],codeID=codeLink,lessonID=id)
 
 @app.route('/lessons/<id>/edit',methods=['POST','GET'],strict_slashes=False)
 def render_lesson_edit(id):
