@@ -34,7 +34,6 @@ function deleteProject(){
         contentType: "application/json",
         dataType: 'json',
         success: function(result){
-            console.log(result)
             window.location.replace(result['processed']);
         }
     });
@@ -65,6 +64,40 @@ window.onload = function () {
     var editor = document.getElementById('textarea').nextSibling.CodeMirror;
     var output = document.getElementById('output');
     output.style.height = editor.getWrapperElement().offsetHeight;
+  }
+
+  function setSelectedLesson(id){
+    var server_data = [
+      {"lessonID": window.location.href.split('/lessons/')[1].split('/edit')[0]},
+      {"codeID": id}
+    ];
+    $.ajax({
+      type: "POST",
+      url: "/link-lesson",
+      data: JSON.stringify(server_data),
+      contentType: "application/json",
+      dataType: 'json',
+      success: function(result){
+          window.location.reload();
+      }
+    });
+  }
+  
+  function removeSelectedLesson(id){
+    var server_data = [
+      {"codeID": id},
+      {"lessonID": window.location.href.split('/lessons/')[1].split('/edit')[0]}
+    ];
+    $.ajax({
+      type: "POST",
+      url: "/unlink-lesson",
+      data: JSON.stringify(server_data),
+      contentType: "application/json",
+      dataType: 'json',
+      success: function(result){
+        window.location.reload();
+      }
+    });
   }
   
   window.onresize = resizeOutput;

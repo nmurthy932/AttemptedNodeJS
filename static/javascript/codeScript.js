@@ -23,7 +23,6 @@ window.onload = function () {
   if(window.location.href.split('#').length > 1){
     var urlEnd = window.location.href.split('#')[1];
     if(urlEnd == 'lesson'){
-      console.log('GOT HERE');
       $('#lesson').click();
     }
   }
@@ -127,7 +126,6 @@ function setSelectedLesson(id){
     contentType: "application/json",
     dataType: 'json',
     success: function(result){
-      console.log(result);
       document.getElementById('isLesson').style.display = 'inline-block';
       document.getElementById('isLesson2').style.display = 'inline-block';
       document.getElementById('newLessonForm').style.display = 'none';
@@ -140,7 +138,8 @@ function setSelectedLesson(id){
 
 function removeSelectedLesson(){
   var server_data = [
-    {"codeID": window.location.href.split('/code/')[1]}
+    {"codeID": window.location.href.split('/code/')[1]},
+    {"lessonID": document.getElementById('lessonIDStorage').value}
   ];
   $.ajax({
     type: "POST",
@@ -149,7 +148,6 @@ function removeSelectedLesson(){
     contentType: "application/json",
     dataType: 'json',
     success: function(result){
-      console.log(result);
       document.getElementById('isLesson').style.display = 'none';
       document.getElementById('isLesson2').style.display = 'none';
       document.getElementById('newLessonForm').style.display = 'inline-block';

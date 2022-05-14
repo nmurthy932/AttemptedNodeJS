@@ -20,14 +20,14 @@ def getOutput(code):
     error = 'error'
   return p, error
 
-def write_compile(input, name, markdown):
+def write_compile(input, name, markdown, id, html, title, isLesson):
   if input == "":
     return render_template('code.html',code=input,output='Please enter some code',errors='error', markdownString=markdown)
   output = getOutput(input)
   codeOutput = output[0].decode()
-  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown, name=name)
+  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown, name=name, id=id,html=html,title=title,isLesson=isLesson)
 
-def newCodeDocument():
+def newCodeDocument(id=None):
   with get_connection() as con:
     cursor = con.cursor()
     docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
@@ -36,6 +36,9 @@ def newCodeDocument():
     created = datetime.datetime.now()
     cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown, linkedLesson) VALUES (?, ?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, getCookieName(), '', '', '',])
     con.commit()
+    if id!=None:
+      cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[id, docID,])
+      con.commit()
     return redirect(url_for('render_code',id=docID))
 
 def getCode(id):
@@ -130,12 +133,12 @@ def newLesson(id=None):
     while(len(cursor.execute('SELECT * FROM nodejs WHERE docID=?',[docID,]).fetchall()) != 0):
       docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     created = datetime.datetime.now()
-    cursor.execute('INSERT INTO lessons (docID, email, title, content, created) VALUES (?, ?, ?, ?, ?)', [docID, getCookieEmail(), 'Untitled lesson', '', created,])
+    cursor.execute('INSERT INTO lessons (docID, email, title, content, created, linked) VALUES (?, ?, ?, ?, ?, ?)', [docID, getCookieEmail(), 'Untitled lesson', '', created,'False',])
     con.commit()
     if id!=None:
-      print(id, docID)
       cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[docID, id,])
       con.commit()
+      cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['True',docID,])
     return redirect(url_for('render_lesson_edit',id=docID))
 
 def getLesson(id, linked=False):

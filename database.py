@@ -18,5 +18,5 @@ def create_tables():
     con.commit()
     cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, email TEXT, firstName TEXT, lastName TEXT, password TEXT, salt TEXT, created TEXT)')
     con.commit()
-    cursor.execute('CREATE TABLE IF NOT EXISTS lessons (id INTEGER PRIMARY KEY, docID TEXT, email TEXT, title TEXT, content TEXT, created TEXT)')
+    cursor.execute('CREATE TABLE IF NOT EXISTS lessons (id INTEGER PRIMARY KEY, docID TEXT, email TEXT, title TEXT, content TEXT, created TEXT, linked TEXT)')
     con.commit()

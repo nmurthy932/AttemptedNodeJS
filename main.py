@@ -83,6 +83,8 @@ def codeHome():
       projects = cursor.execute('SELECT * FROM nodejs ORDER BY created DESC').fetchall()
       return render_template('codeHome.html', projects=projects)
   else:
+    if request.form['submit'] == 'Create New Linked Code Document':
+      return newCodeDocument(request.form['id'])
     return newCodeDocument()
 
 @app.route('/code/<id>', methods=['POST','GET'],strict_slashes=False)
@@ -99,7 +101,8 @@ def render_code(id):
   else:
     with get_connection() as con:
       cursor = con.cursor()
-      lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
+      ##TODO: WHAT IF THERE ARE MULTIPLE LINKED LESSONS TO ONE CODE DOCUMENT
+      lessons = cursor.execute('SELECT * FROM lessons WHERE linked=? ORDER BY created DESC',['False',]).fetchall()
       html = render_template('lessonSelect.html',lessons=lessons)
       title = 'Choose a lesson to link'
       isLesson = ''
@@ -107,7 +110,7 @@ def render_code(id):
     logging.info("*** Form displayed using GET ***")
     return render_template('code.html',name=name,id=id,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson)
   else:
-    return write_compile(str(request.form['code']), name, markdownString)
+    return write_compile(str(request.form['code']), name, markdownString, id, html, title, isLesson)
 
 @app.route('/lessons',methods=['POST','GET'],strict_slashes=False)
 def lessonHome():
@@ -118,7 +121,6 @@ def lessonHome():
       return render_template('lessonHome.html',lessons=lessons)
   else:
     if request.form['submit'] == 'Create New Linked Lesson':
-      print(request.form['id'])
       return newLesson(request.form['id'])
     return newLesson()
 
@@ -141,9 +143,14 @@ def render_lesson_edit(id):
       linkedCode = cursor.execute('SELECT docID FROM nodejs WHERE linkedLesson=?', [id,]).fetchall()
       if linkedCode != []:
         linkedCode = linkedCode[0]['docID']
+        html = ''
+        name = ''
       else:
         linkedCode = None
-      return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'],codeID=linkedCode)
+        projects = cursor.execute('SELECT * FROM nodejs WHERE linkedLesson=? ORDER BY created DESC',['',]).fetchall()
+        html = render_template('codeSelect.html',projects=projects)
+        name = 'Choose a lesson to link'
+      return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'],codeID=linkedCode,html=html,name=name,lessonID=id)
 
 ## AJAX FUNCTIONS
 
@@ -173,6 +180,10 @@ def deleteDoc():
     data = request.get_json()
     with get_connection() as con:
       cursor = con.cursor()
+      linkedLesson = cursor.execute('SELECT linkedLesson FROM nodejs WHERE docID=?',[data[0]['docID'],]).fetchall()
+      if linkedLesson != []:
+        linkedLesson = linkedLesson[0]['linkedLesson']
+        cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['False',linkedLesson,])
       cursor.execute('DELETE FROM nodejs WHERE docID=?', [data[0]['docID'],])
       con.commit()
     results = {'processed': 'true'}
@@ -220,8 +231,13 @@ def linkLesson():
       cursor = con.cursor()
       cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[data[0]['lessonID'], data[1]['codeID'],])
       con.commit()
+      cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['True',data[0]['lessonID'],])
+      con.commit()
     lesson = getLesson(data[0]['lessonID'], True)
-    results = {'title': lesson['title'], 'content': lesson['content']}
+    if lesson != None:
+      results = {'title': lesson['title'], 'content': lesson['content']}
+    else:
+      results = {'title': None, 'content': None}
     return jsonify(results)
   else:
     return redirect(url_for('render_home'))
@@ -232,6 +248,8 @@ def unlinkLesson():
     data = request.get_json()
     with get_connection() as con:
       cursor = con.cursor()
+      cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['False', data[1]['lessonID'],])
+      con.commit()
       cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',['', data[0]['codeID'],])
       con.commit()
       lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()

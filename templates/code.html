@@ -83,16 +83,16 @@
       </div>
       {% if isLesson != '' %}
         <button type="button" id="isLesson" onclick="removeSelectedLesson()">Unlink Lesson</button>
-        <button type="button" id="isLesson2"><a href="/lessons/{{isLesson}}/edit" target="_blank">Edit Lesson</a></button>
+        <button type="button" id="isLesson2"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
         <form action="/lessons" method="post" id="newLessonForm" style="display: none;">
-          <input type="input" value="{{id}}" name="id" style="display: none;">
+          <input type="input" id="lessonIDStorage" value="{{id}}" name="id" style="display: none;">
           <input type="submit" name="submit" value="Create New Linked Lesson">
         </form>
       {% else %}
         <button type="button" id="isLesson" style="display: none;" onclick="removeSelectedLesson()">Unlink Lesson</button>
-        <button type="button" id="isLesson2" style="display: none;"><a href="/lessons/{{isLesson}}/edit" target="_blank">Edit Lesson</a></button>
+        <button type="button" id="isLesson2" style="display: none;"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
         <form action="/lessons" method="post" class="d-flex justify-content-center" id="newLessonForm">
-          <input type="input" value="{{id}}" name="id" style="display: none;">
+          <input type="input" id="lessonIDStorage" value="{{id}}" name="id" style="display: none;">
           <input type="submit" name="submit" value="Create New Linked Lesson">
         </form>
       {% endif %}
