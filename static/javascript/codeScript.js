@@ -173,4 +173,29 @@ function removeSelectedLesson(){
   }
 }
 
+function publish(){
+  if(document.cookie.includes('teacher')){
+    var server_data = [
+      {'document': 'code'},
+      {'codeID': window.location.href.split('/code/')[1]},
+      {'published': document.getElementById('published').checked}
+    ]
+    $.ajax({
+      type: "POST",
+      url: "/set-published",
+      data: JSON.stringify(server_data),
+      contentType: "application/json",
+      dataType: 'json',
+      success: function(result){
+        if(document.getElementById('published').checked){
+          $('label[for="published"]').text('Published');
+        }
+        else{
+          $('label[for="published"]').text('Unpublished');
+        }
+      }
+    });
+  }
+}
+
 window.onresize = resizeOutput;

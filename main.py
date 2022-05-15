@@ -77,6 +77,8 @@ def register():
     lastName = request.form['lastName']
     return create_password(email, firstName, lastName, password, role)
   else:
+    if request.cookies.get('user') != None and check_email(request.cookies.get('user')):
+      return redirect(url_for('render_home'))
     return render_template("register.html")
 
 ##Logged in routes
@@ -86,16 +88,23 @@ def codeHome():
   if request.method == 'GET':
     with get_connection() as con:
       cursor = con.cursor()
-      projects = cursor.execute('SELECT * FROM nodejs WHERE email=? ORDER BY created DESC',[getCookieEmail(),]).fetchall()
-      return render_template('codeHome.html', projects=projects, role=getRole(getCookieEmail()))
+      projects = cursor.execute('SELECT * FROM nodejs WHERE email=? OR published=? ORDER BY created DESC',[getCookieEmail(),1,]).fetchall()
+      return render_template('codeHome.html', projects=projects, role=getRole(getCookieEmail()), email=getCookieEmail())
   else:
-    if request.form['submit'] == 'Create New Linked Code Document':
-      return newCodeDocument(request.form['id'])
+    if request.form['submit'] == 'Create New Linked Code Document' and check_role(request.cookies.get('user')):
+      return newCodeDocument(linkedLesson=request.form['id'])
     return newCodeDocument()
 
+##TODO: Fix that weird unlink problem when you unlink in lesson
 @app.route('/code/<id>', methods=['POST','GET'],strict_slashes=False)
 def render_code(id):
   codePage = getCode(id)
+  if codePage['email'] != getCookieEmail() and codePage['published'] == 0:
+    return redirect(url_for('render_home'))
+  if codePage['email'] == getCookieEmail():
+    permissions = "author"
+  else:
+    permissions = "visitor"
   nodeCode = codePage['code']
   markdownString = codePage['markdown']
   name = codePage['name']
@@ -108,25 +117,25 @@ def render_code(id):
     with get_connection() as con:
       cursor = con.cursor()
       lessons = cursor.execute('SELECT * FROM lessons WHERE linked=? ORDER BY created DESC',['False',]).fetchall()
-      html = render_template('lessonSelect.html',lessons=lessons)
+      html = render_template('lessonSelect.html',lessons=lessons, role=getRole(getCookieEmail()))
       title = 'Choose a lesson to link'
       isLesson = ''
   if request.method == 'GET':
     logging.info("*** Form displayed using GET ***")
-    return render_template('code.html',name=name,id=id,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson,role=getRole(getCookieEmail()))
+    return render_template('code.html',name=name,id=id,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson,role=getRole(getCookieEmail()), permissions=permissions, published=codePage['published'])
   else:
-    return write_compile(str(request.form['code']), name, markdownString, id, html, title, isLesson)
+    return write_compile(str(request.form['code']), name, markdownString, id, html, title, isLesson, permissions, codePage['published'])
 
 @app.route('/lessons',methods=['POST','GET'],strict_slashes=False)
 def lessonHome():
   if request.method == 'GET':
     with get_connection() as con:
       cursor = con.cursor()
-      lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
+      lessons = cursor.execute('SELECT * FROM lessons WHERE email=? OR published=? ORDER BY created DESC',[getCookieEmail(), 1,]).fetchall()
       return render_template('lessonHome.html',lessons=lessons,role=getRole(getCookieEmail()))
   elif check_role(request.cookies.get('user')):
     if request.form['submit'] == 'Create New Linked Lesson':
-      return newLesson(request.form['id'])
+      return newLesson(request.form['id'], linked='True')
     return newLesson()
   else:
     return redirect(url_for('render_home'))
@@ -138,6 +147,12 @@ def redirect_lesson(id):
 @app.route('/lessons/<id>/view',methods=['POST','GET'],strict_slashes=False)
 def render_lesson(id):
   lessonPage = getLesson(id)
+  if lessonPage['email'] != getCookieEmail() and lessonPage['published'] == 1:
+    permissions = "visitor"
+  elif lessonPage['email'] != getCookieEmail() and lessonPage['published'] == 0:
+    return redirect(url_for('render_home'))
+  else:
+    permissions = "author"
   if lessonPage['linked'] == 'True':
     with get_connection() as con:
       cursor = con.cursor()
@@ -148,12 +163,14 @@ def render_lesson(id):
         codeLink = None
   else:
     codeLink = None
-  if request.method == 'GET':
-    return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'],codeID=codeLink,lessonID=id,role=getRole(getCookieEmail()))
+  if request.method == 'GET' and lessonPage['published'] == 1:
+    return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'],codeID=codeLink,lessonID=id,role=getRole(getCookieEmail()),permissions=permissions)
 
 @app.route('/lessons/<id>/edit',methods=['POST','GET'],strict_slashes=False)
 def render_lesson_edit(id):
   lessonPage = getLesson(id)
+  if lessonPage['email'] != getCookieEmail():
+    return redirect(url_for('render_home'))
   if request.method == "GET":
     with get_connection() as con:
       cursor = con.cursor()
@@ -165,17 +182,18 @@ def render_lesson_edit(id):
       else:
         linkedCode = None
         projects = cursor.execute('SELECT * FROM nodejs WHERE linkedLesson=? ORDER BY created DESC',['',]).fetchall()
-        html = render_template('codeSelect.html',projects=projects)
+        html = render_template('codeSelect.html',projects=projects, role=getRole(getCookieEmail()))
         name = 'Choose a lesson to link'
-      return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'],codeID=linkedCode,html=html,name=name,lessonID=id)
+      return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'],codeID=linkedCode,html=html,name=name,lessonID=id,published=lessonPage['published'])
 
 ## AJAX FUNCTIONS
 
 @app.route('/update-code', methods=['POST','GET'])
 def udpateCode():
   if request.method == 'POST':
-    ##text = request.json('text')
     data = request.get_json()
+    if getEmail(data[1]['docID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
     if data[0]['Name'] == '':
       data[0]['Name'] = 'Untitled project'
     with get_connection() as con:
@@ -196,6 +214,8 @@ def udpateCode():
 def deleteDoc():
   if request.method == 'POST':
     data = request.get_json()
+    if getEmail(data[0]['docID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
     with get_connection() as con:
       cursor = con.cursor()
       email = cursor.execute('SELECT email FROM nodejs WHERE docID=?',[data[0]['docID'],]).fetchall()
@@ -216,6 +236,8 @@ def deleteDoc():
 def updateLesson():
   if request.method == 'POST':
     data = request.get_json()
+    if getEmail(data[1]['docID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
     if data[0]['title'] == '':
       data[0]['title'] = 'Untitled lesson'
     with get_connection() as con:
@@ -233,6 +255,8 @@ def updateLesson():
 def deleteLesson():
   if request.method == 'POST':
     data = request.get_json()
+    if getEmail(data[0]['docID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
     with get_connection() as con:
       cursor = con.cursor()
       cursor.execute('DELETE FROM lessons WHERE docID=?', [data[0]['docID'],])
@@ -248,6 +272,8 @@ def deleteLesson():
 def linkLesson():
   if request.method == 'POST':
     data = request.get_json()
+    if getEmail(data[1]['codeID']) != getCookieEmail() or getEmail(data[0]['lessonID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
     with get_connection() as con:
       cursor = con.cursor()
       cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[data[0]['lessonID'], data[1]['codeID'],])
@@ -267,6 +293,8 @@ def linkLesson():
 def unlinkLesson():
   if request.method == 'POST':
     data = request.get_json()
+    if getEmail(data[1]['lessonID']) != getCookieEmail() or getEmail(data[0]['codeID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
     with get_connection() as con:
       cursor = con.cursor()
       cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['False', data[1]['lessonID'],])
@@ -281,6 +309,43 @@ def unlinkLesson():
       return jsonify(results)
   else:
     return redirect(url_for('render_home'))
+
+@app.route('/set-published',methods=['POST','GET'])
+def setPublish():
+  if request.method == 'POST':
+    data = request.get_json()
+    if data[2]['published'] == True:
+      data[2]['published'] = 1
+    elif data[2]['published'] == False:
+      data[2]['published'] = 0
+    if data[0]['document'] == 'lesson':
+      if getEmail(data[1]['lessonID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
+      else:
+        with get_connection() as con:
+          cursor = con.cursor()
+          cursor.execute('UPDATE lessons SET published=? WHERE docID=? AND email=?',[data[2]['published'],data[1]['lessonID'],getCookieEmail(),])
+          con.commit()
+          if getLesson(data[1]['lessonID'])['linked'] == 'True':
+            cursor.execute('UPDATE nodejs SET published=? WHERE linkedLesson=? AND email=?',[data[2]['published'],data[1]['lessonID'],getCookieEmail(),])
+            con.commit()
+    else:
+      if getEmail(data[1]['codeID']) != getCookieEmail():
+        return redirect(url_for('render_home'))
+      else:
+        with get_connection() as con:
+          cursor = con.cursor()
+          cursor.execute('UPDATE nodejs SET published=? WHERE docID=? AND email=?',[data[2]['published'],data[1]['codeID'],getCookieEmail()])
+          con.commit()
+          if getCode(data[1]['codeID'])['linkedLesson'] != '':
+            cursor.execute('UPDATE lessons SET published=? WHERE docID=? AND email=?',[data[2]['published'],getCode(data[1]['codeID'])['linkedLesson'],getCookieEmail(),])
+            con.commit()
+    results = {'processed': 'true'}
+    return jsonify(results)
+  else:
+    return redirect(url_for('render_home'))
+
+    
 
 if __name__ == "__main__":
 	app.run(

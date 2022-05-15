@@ -15,6 +15,15 @@
             <a href="/lessons">Back to lessons</a>
             <input id="lessonName" type="text" class="" value="{{title}}" onchange="save()" placeholder="Untitled lesson">
             <p id="save">Saved</p>
+            <div class="form-check form-switch" id="publishedForm">
+                {% if published == 1 %}
+                <input type="checkbox" role="switch" class="form-check-input" id="published" onclick="publish()" checked>
+                <label class="form-check-label" for="published">Published</label>
+                {% else %}
+                <input type="checkbox" role="switch" class="form-check-input" id="published" onclick="publish()">
+                <label class="form-check-label" for="published">Unpublished</label>
+                {% endif %}
+            </div>
             <button><a href="/lessons/{{lessonID}}/view">View Lesson</a></button>
             {% if codeID != None %}
             <button type="button"><a href="/code/{{codeID}}">Linked Code</a></button>

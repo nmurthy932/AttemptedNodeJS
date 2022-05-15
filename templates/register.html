@@ -6,12 +6,12 @@
 <p>Your account has been created. You may now login</p>
 {% else %}
 <div class="d-flex" id="registerDiv">
-    <form method="post" class="container-fluid">
-        <div id="logo" class="align-items-start">
+    <form method="post" class="container-fluid form">
+        <div id="logo" class="align-items-start p-3">
             <h1 class="display-1 text-center"><a href="/home">Ln</a></h1>
         </div>
         <div id="form-data" class="align-items-center">
-            <div class="row p-2">
+            <div class="row p-3">
                 <div class="btn-group" role="group" id="btngroup">
                     {% if role == "teacher" %}
                     <input type="radio" class="btn-check" id="btncheck1" name="role" autocomplete="off" value="student">
@@ -26,21 +26,33 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="row p-2">
-                <input type="text" name="email" placeholder="Enter email" class="form form-control" value="{{email}}" id="email" autocomplete="off">
+            <div class="row p-3">
+                <div class="form-floating">
+                    <input type="email" name="email" placeholder="Email Address" class="form-control" value="{{email}}" id="email" autocomplete="off">
+                    <label for="email">Email Address</label>
+                </div>
             </div>
-            <div class="row p-2 justify-content-between">
+            <div class="row p-3 justify-content-between">
                 <div class="col-6" id="name1">
-                    <input type="text" class="form form-control" placeholder="First Name" name="firstName" value="{{firstName}}" id="firstName" autocomplete="off">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="First Name" name="firstName" value="{{firstName}}" id="firstName" autocomplete="off">
+                        <label for="firstName">First Name</label>
+                    </div>
                 </div>
                 <div class="col-6" id="name2">
-                    <input type="text" class="form form-control" placeholder="Last Name" name="lastName" value="{{lastName}}" id="lastName" autocomplete="off">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" placeholder="Last Name" name="lastName" value="{{lastName}}" id="lastName" autocomplete="off">
+                        <label for="lastName">Last Name</label>
+                    </div>
                 </div>
             </div>
-            <div class="row p-2">
-                <input type="password" name="password" placeholder="Enter password" class="form form-control" id="password" autocomplete="off">
+            <div class="row p-3">
+                <div class="form-floating">
+                    <input type="password" name="password" placeholder="Password" class="form-control" id="password" autocomplete="off">
+                    <label for="password">Password</label>
+                </div>
             </div>
-            <div class="row p-2" id="submit">
+            <div class="row p-3" id="submit">
                 <input type="submit" name="submit" value="Login" class="btn btn-outline-light btn-block">
             </div>
             <p id="error" class="row text-center">{{error}}</p>

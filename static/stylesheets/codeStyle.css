@@ -15,7 +15,8 @@
 }
 
 #leftSide, #rightSide{
-  height: 99%;
+  height: 100%;
+  padding: 10px;
 }
 
 #input form{
@@ -45,7 +46,7 @@
   width: 100%;
   margin: 0px;
   color: #3FDE74;
-  height: 99%;
+  height: 100%;
 }
 
 .CodeMirror {
@@ -73,6 +74,10 @@
   width: 50px;
 }
 
+#publishedForm{
+  width: 75px;
+}
+
 #save{
   margin: auto 0px auto 0px;
 }
@@ -83,11 +88,14 @@
 
 #sidebarMenu{
   background-color: white;
+  height: 100%;
 }
 
 .offcanvas.offcanvas-end{
   width: 92%;
   left: 8%;
+  height: 93%;
+  top: 7%;
 }
 
 #html{

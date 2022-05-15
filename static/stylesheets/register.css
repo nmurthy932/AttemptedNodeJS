@@ -50,6 +50,10 @@ h1 a:hover{
     float: right;
 }
 
-#btngroup{
+#btngroup, .form-floating{
+    padding: 0px;
+}
+
+div.form-floating{
     padding: 0px;
 }

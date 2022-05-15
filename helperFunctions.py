@@ -20,35 +20,34 @@ def getOutput(code):
     error = 'error'
   return p, error
 
-def write_compile(input, name, markdown, id, html, title, isLesson):
+def write_compile(input, name, markdown, id, html, title, isLesson, permissions, published):
   if input == "":
-    return render_template('code.html',code=input,output='Please enter some code',errors='error', markdownString=markdown)
+    return render_template('code.html',code=input,output='Please enter some code',errors='error', markdownString=markdown, name=name, id=id,html=html,title=title,isLesson=isLesson,role=getRole(getCookieEmail()), permissions=permissions, published=published)
   output = getOutput(input)
   codeOutput = output[0].decode()
-  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown, name=name, id=id,html=html,title=title,isLesson=isLesson,role=getRole(getCookieEmail()))
+  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown, name=name, id=id,html=html,title=title,isLesson=isLesson,role=getRole(getCookieEmail()), permissions=permissions, published=published)
 
-def newCodeDocument(id=None):
+def newCodeDocument(name="Untitled project", code="", markdown="", linkedLesson="",published=0):
   with get_connection() as con:
+    if linkedLesson != "" and getLesson(linkedLesson)['published']:
+      published = 1
     cursor = con.cursor()
     docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     while(len(cursor.execute('SELECT * FROM nodejs WHERE docID=?',[docID,]).fetchall()) != 0):
       docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     created = datetime.datetime.now()
-    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown, linkedLesson) VALUES (?, ?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, getCookieEmail(), '', '', '',])
+    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown, linkedLesson, published) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [docID, name, created, getCookieEmail(), code, markdown, linkedLesson,published,])
     con.commit()
-    if id!=None:
-      cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[id, docID,])
-      con.commit()
-      cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['True',id,])
-      con.commit()
     return redirect(url_for('render_code',id=docID))
 
-def getCode(id):
+def getCode(id, linked=False):
   with get_connection() as con:
     cursor = con.cursor()
     codePage = cursor.execute('SELECT * FROM nodejs WHERE docID=?',[id,]).fetchall()
     if len(codePage) != 0:
       codeInfo = codePage[0]
+    elif linked:
+      codeInfo = None
     else:
       abort(404)
     return codeInfo
@@ -130,19 +129,22 @@ def getCookieEmail():
     else:
       return None
 
-def newLesson(id=None):
+def newLesson(id=None, title="Untitled lesson", content="", linked='False', published=0):
   with get_connection() as con:
+    if linked != 'False' and getCode(id)['published'] == 1:
+      published = 1
     cursor = con.cursor()
     docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     while(len(cursor.execute('SELECT * FROM nodejs WHERE docID=?',[docID,]).fetchall()) != 0):
       docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     created = datetime.datetime.now()
-    cursor.execute('INSERT INTO lessons (docID, email, title, content, created, linked) VALUES (?, ?, ?, ?, ?, ?)', [docID, getCookieEmail(), 'Untitled lesson', '', created,'False',])
+    cursor.execute('INSERT INTO lessons (docID, email, title, content, created, linked, published) VALUES (?, ?, ?, ?, ?, ?, ?)', [docID, getCookieEmail(), title, content, created,linked,published,])
     con.commit()
-    if id!=None:
+    if id!=None and linked=='True':
       cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[docID, id,])
       con.commit()
       cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['True',docID,])
+      con.commit()
     return redirect(url_for('render_lesson_edit',id=docID))
 
 def getLesson(id, linked=False):
@@ -155,7 +157,6 @@ def getLesson(id, linked=False):
       abort(404)
     else:
       lessonInfo = None
-    print(lessonInfo)
     return lessonInfo
 
 def getRole(email):
@@ -166,3 +167,17 @@ def getRole(email):
       return role[0]['role']
     else:
       return 'student'
+
+def getEmail(docID):
+  with get_connection() as con:
+    cursor = con.cursor()
+    email = cursor.execute('SELECT email FROM nodejs WHERE docID=?',[docID,]).fetchall()
+    if email != []:
+      return email[0]['email']
+    else:
+      email = cursor.execute('SELECT email FROM lessons WHERE docID=?',[docID,]).fetchall()
+      if email == []:
+        return None
+      else:
+        return email[0]['email']
+    

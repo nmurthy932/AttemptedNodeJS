@@ -16,6 +16,10 @@
     width: 50px;
 }
 
+#publishedForm{
+  width: 75px;
+}
+
 textarea{
     width: 90%;
     height: 100%;

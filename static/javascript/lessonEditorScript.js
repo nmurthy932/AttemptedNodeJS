@@ -113,5 +113,30 @@ window.onload = function () {
       });
     }
   }
+
+  function publish(){
+    if(document.cookie.includes('teacher')){
+      var server_data = [
+        {'document': 'lesson'},
+        {'lessonID': window.location.href.split('/lessons/')[1].split('/edit')[0]},
+        {'published': document.getElementById('published').checked}
+      ]
+      $.ajax({
+        type: "POST",
+        url: "/set-published",
+        data: JSON.stringify(server_data),
+        contentType: "application/json",
+        dataType: 'json',
+        success: function(result){
+          if(document.getElementById('published').checked){
+            $('label[for="published"]').text('Published');
+          }
+          else{
+            $('label[for="published"]').text('Unpublished');
+          }
+        }
+      });
+    }
+  }
   
   window.onresize = resizeOutput;
