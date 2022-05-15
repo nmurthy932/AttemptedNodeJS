@@ -22,7 +22,13 @@
       <div id="content" class="row d-flex justify-content-between">
         <ul class="nav flex-column col-1" id="sidebarMenu">
           <li class="nav-item">
-            <a class="nav-link active"><button class="btn btn-primary" id="lesson" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLeft">Lesson</button></a>
+            <a class="nav-link active">
+              {% if role == "teacher" %}
+              <button class="btn btn-primary" id="lesson" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLeft">Lesson</button>
+              {% elif isLesson != '' and role == "student" %}
+              <button class="btn btn-primary" id="lesson" type="button" disabled>Lesson</button>
+              {% endif %}
+            </a>
           </li>
         </ul>
         <div id="leftSide" class="col-6">
@@ -30,17 +36,21 @@
             <li class="nav-item">
               <button class="nav-link active" id="inputTab" onclick="switchTab('input')">Node.js</button>
             </li>
+            {% if role == "teacher" %}
             <li class="nav-item">
               <button class="nav-link" id="markdownEditTab" onclick="switchTab('markdownEdit')">Edit Markdown</button>
             </li>
+            {% endif %}
           </ul>
           <div id="input">
             <form method="post" class="row g-3" id="codeForm">
               <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here" oninput="save()">{{code}}</textarea><br>
             </form>
+            {% if role == "teacher" %}
             <form method="post" class="row g-3" id="markdownForm">
               <textarea id="mkdown" class="CodeMirror" placeholder="Enter markdown code here" oninput="save()">{{markdownString}}</textarea>
             </form>
+            {% endif %}
           </div>
         </div>
         <div id="rightSide" class="col-5">
@@ -86,7 +96,7 @@
           <input type="input" id="lessonIDStorage" value="{{id}}" name="id" style="display: none;">
           <input type="submit" name="submit" value="Create New Linked Lesson">
         </form>
-      {% else %}
+      {% elif role == "teacher" %}
         <button type="button" id="isLesson" style="display: none;" onclick="removeSelectedLesson()">Unlink Lesson</button>
         <button type="button" id="isLesson2" style="display: none;"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
         <form action="/lessons" method="post" id="newLessonForm">

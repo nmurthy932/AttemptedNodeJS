@@ -25,7 +25,7 @@ def write_compile(input, name, markdown, id, html, title, isLesson):
     return render_template('code.html',code=input,output='Please enter some code',errors='error', markdownString=markdown)
   output = getOutput(input)
   codeOutput = output[0].decode()
-  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown, name=name, id=id,html=html,title=title,isLesson=isLesson)
+  return render_template('code.html',output=codeOutput, errors=output[1], code=input, markdownString=markdown, name=name, id=id,html=html,title=title,isLesson=isLesson,role=getRole(getCookieEmail()))
 
 def newCodeDocument(id=None):
   with get_connection() as con:
@@ -34,10 +34,12 @@ def newCodeDocument(id=None):
     while(len(cursor.execute('SELECT * FROM nodejs WHERE docID=?',[docID,]).fetchall()) != 0):
       docID = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(20))
     created = datetime.datetime.now()
-    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown, linkedLesson) VALUES (?, ?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, getCookieName(), '', '', '',])
+    cursor.execute('INSERT INTO nodejs (docID, name, created, email, code, markdown, linkedLesson) VALUES (?, ?, ?, ?, ?, ?, ?)', [docID, 'Untitled project', created, getCookieEmail(), '', '', '',])
     con.commit()
     if id!=None:
       cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',[id, docID,])
+      con.commit()
+      cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['True',id,])
       con.commit()
     return redirect(url_for('render_code',id=docID))
 
@@ -67,24 +69,26 @@ def valid_pass(password):
     ret = False
   return ret
   
-def create_password(email, firstName, lastName, password):
+def create_password(email, firstName, lastName, password, role):
   if not valid_email(email):
-    return render_template('register.html',error="Invalid email",email=email, firstName=firstName, lastName=lastName)
+    return render_template('register.html',error="Invalid email",email=email, firstName=firstName, lastName=lastName,role=role)
   if firstName == "":
-    return render_template('register.html',error="You must enter a first name",email=email, firstName=firstName, lastName=lastName)
+    return render_template('register.html',error="You must enter a first name",email=email, firstName=firstName, lastName=lastName,role=role)
   if lastName == "":
-    return render_template('register.html',error="You must enter a last name",email=email, firstName=firstName, lastName=lastName)
+    return render_template('register.html',error="You must enter a last name",email=email, firstName=firstName, lastName=lastName,role=role)
+  if role != "student" and role != "teacher":
+    return render_template('register.html',error="You must select an existing role",email=email,firstName=firstName,lastName=lastName,role=role)
   ##TODO: Add encryption here
   salt = "".join(random.choices(string.ascii_letters+string.digits, k=10))
   if password == "":
-    return render_template('register.html',error="You must enter a password",email=email, firstName=firstName, lastName=lastName)
+    return render_template('register.html',error="You must enter a password",email=email, firstName=firstName, lastName=lastName,role=role)
   password = hash_str(password+salt)
   created = datetime.datetime.now()
   with get_connection() as con:
     cursor = con.cursor()
     if len(cursor.execute('SELECT * FROM users WHERE email=?',[email,]).fetchall()) != 0:
-      return render_template('register.html',error="That email is already taken",email=email, firstName=firstName, lastName=lastName)
-    cursor.execute('INSERT INTO users (email, firstName, lastName, password, salt, created) VALUES (?, ?, ?, ?, ?, ?)', [email, firstName, lastName, password, salt, created,])
+      return render_template('register.html',error="That email is already taken",email=email, firstName=firstName, lastName=lastName,role=role)
+    cursor.execute('INSERT INTO users (email, firstName, lastName, password, salt, created, role) VALUES (?, ?, ?, ?, ?, ?, ?)', [email, firstName, lastName, password, salt, created,role,])
     con.commit()
   return render_template('register.html',success=True)
 
@@ -151,4 +155,14 @@ def getLesson(id, linked=False):
       abort(404)
     else:
       lessonInfo = None
+    print(lessonInfo)
     return lessonInfo
+
+def getRole(email):
+  with get_connection() as con:
+    cursor = con.cursor()
+    role = cursor.execute('SELECT role FROM users WHERE email=?',[email,]).fetchall()
+    if role != []:
+      return role[0]['role']
+    else:
+      return 'student'

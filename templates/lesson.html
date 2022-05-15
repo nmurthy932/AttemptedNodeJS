@@ -9,7 +9,9 @@
                 <a href="/lessons">Back to lessons</a>
             </div>
             <h1 class="col-4">{{title}}</h1>
+            {% if role == "teacher" %}
             <button><a href="/lessons/{{lessonID}}/edit">Edit Lesson</a></button>
+            {% endif %}
             {% if codeID != None %}
             <button type="button"><a href="/code/{{codeID}}">Linked Code</a></button>
             {% endif %}

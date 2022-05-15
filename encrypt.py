@@ -21,12 +21,27 @@ def check_secure_val(s, hash, salt):
 def encryptEmail(email):
   return hashlib.md5(str(email).encode("utf-8")).hexdigest()
 
+def encryptRole(role):
+  return hashlib.md5(str(role).encode("utf-8")).hexdigest()
+
 def check_email(encrypted):
   encrypted = encrypted.split('|')
   if len(encrypted) > 1:
     email = encrypted[0]
     hash = encrypted [1]
     if encryptEmail(email) == hash:
+      return True
+  else:
+    return False
+
+def check_role(encrypted):
+  encrypted = encrypted.split('|')
+  if len(encrypted) > 1:
+    email = encrypted[0]
+    hash = encrypted[1]
+    role = encrypted[2]
+    roleHash = encrypted[3]
+    if encryptRole(role) == roleHash and role == 'teacher':
       return True
   else:
     return False

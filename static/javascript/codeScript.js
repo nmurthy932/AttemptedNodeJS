@@ -4,18 +4,20 @@ window.onload = function () {
       lineWrapping: true,
       mode: "javascript"
   });
-  var editor2 = CodeMirror.fromTextArea($("#mkdown")[0], {
-    lineNumbers: true,
-    lineWrapping: true,
-    mode: "markdown"
-  });
+  if(document.cookie.includes('teacher')){
+    var editor2 = CodeMirror.fromTextArea($("#mkdown")[0], {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: "markdown"
+    });
+    editor2.setSize('100%','95%');
+    editor2.on('change',save);
+  }
   editor.setSize('100%','95%');
-  editor2.setSize('100%','95%');
   var output = document.getElementById('output');
   output.style.height = editor.getWrapperElement().offsetHeight;
   
   editor.on('change',save);
-  editor2.on('change',save);
 
   switchTab('input');
   switchTab('console');
@@ -32,8 +34,13 @@ function save(){
   var editor = document.getElementById('code').nextSibling.CodeMirror;
   code = editor.getValue();
   document.getElementById('save').textContent = 'Saving';
-  var editor2 = document.getElementById('mkdown').nextSibling.CodeMirror;
-  var markdownValue = editor2.getValue();
+  if(document.cookie.includes('teacher')){
+    var editor2 = document.getElementById('mkdown').nextSibling.CodeMirror;
+    var markdownValue = editor2.getValue();
+  }
+  else{
+    var markdownValue = '';
+  }
   var server_data = [
     {"Name": document.getElementById('docName').value},
     {"docID": window.location.href.split('/code/')[1]},
@@ -49,8 +56,8 @@ function save(){
     success: function(result){
       document.getElementById('save').textContent = 'Saved';
       if(document.getElementById('docName').value != '')
-        document.getElementById('title').textContent = document.getElementById('docName').value;
-      else document.getElementById('title').textContent = 'Untitled project';
+        document.getElementById('title').textContent = document.getElementById('docName').value+' - LASAnode';
+      else document.getElementById('title').textContent = 'Untitled project - LASAnode';
       createMarkdown(markdownValue);
     }
   });
@@ -75,12 +82,14 @@ function switchTab(string){
     var consoleTab = document.getElementById('consoleTab');
   }
   else{
-    var markdown = document.getElementById('markdownForm');
+    if(document.cookie.includes('teacher')){
+      var markdown = document.getElementById('markdownForm');
+      var mdTab = document.getElementById('markdownEditTab');
+    }
     var consolething = document.getElementById('codeForm');
-    var mdTab = document.getElementById('markdownEditTab');
     var consoleTab = document.getElementById('inputTab');
   }
-  if(string == 'markdown' || string == 'markdownEdit'){
+  if(string == 'markdown' || (string == 'markdownEdit' && document.cookie.includes('teacher'))){
     consolething.style.display = 'none';
     markdown.style.display = 'block';
     mdTab.setAttribute('class','nav-link active');
@@ -88,8 +97,10 @@ function switchTab(string){
   }
   else if(string=='console' || string == 'input'){
     consolething.style.display = 'block';
-    markdown.style.display = 'none';
-    mdTab.setAttribute('class','nav-link');
+    if(string == 'console' || document.cookie.includes('teacher')){
+      markdown.style.display = 'none';
+      mdTab.setAttribute('class','nav-link');
+    }
     consoleTab.setAttribute('class','nav-link active');
   }
 }
@@ -115,48 +126,51 @@ function resizeOutput(){
 }
 
 function setSelectedLesson(id){
-  console.log(id);
-  var server_data = [
-    {"lessonID": id},
-    {"codeID": window.location.href.split('/code/')[1]}
-  ];
-  $.ajax({
-    type: "POST",
-    url: "/link-lesson",
-    data: JSON.stringify(server_data),
-    contentType: "application/json",
-    dataType: 'json',
-    success: function(result){
-      console.log(id);
-      document.getElementById('isLesson').style.display = 'inline-block';
-      document.getElementById('isLesson2').style.display = 'inline-block';
-      document.getElementById('newLessonForm').style.display = 'none';
-      document.getElementById('isLesson2').childNodes[0].href = '/lessons/'+id+'/edit';
-      document.getElementById('htmlTitle').textContent = result['title'];
-      document.getElementById('htmlContent').innerHTML = result['content'];
-    }
-  });
+  if(document.cookie.includes('teacher')){
+    var server_data = [
+      {"lessonID": id},
+      {"codeID": window.location.href.split('/code/')[1]}
+    ];
+    $.ajax({
+      type: "POST",
+      url: "/link-lesson",
+      data: JSON.stringify(server_data),
+      contentType: "application/json",
+      dataType: 'json',
+      success: function(result){
+        console.log(id);
+        document.getElementById('isLesson').style.display = 'inline-block';
+        document.getElementById('isLesson2').style.display = 'inline-block';
+        document.getElementById('newLessonForm').style.display = 'none';
+        document.getElementById('isLesson2').childNodes[0].href = '/lessons/'+id+'/edit';
+        document.getElementById('htmlTitle').textContent = result['title'];
+        document.getElementById('htmlContent').innerHTML = result['content'];
+      }
+    });
+  }
 }
 
 function removeSelectedLesson(){
-  var server_data = [
-    {"codeID": window.location.href.split('/code/')[1]},
-    {"lessonID": document.getElementById('lessonIDStorage').value}
-  ];
-  $.ajax({
-    type: "POST",
-    url: "/unlink-lesson",
-    data: JSON.stringify(server_data),
-    contentType: "application/json",
-    dataType: 'json',
-    success: function(result){
-      document.getElementById('isLesson').style.display = 'none';
-      document.getElementById('isLesson2').style.display = 'none';
-      document.getElementById('newLessonForm').style.display = 'inline-block';
-      document.getElementById('htmlTitle').textContent = result['title']
-      document.getElementById('htmlContent').innerHTML = result['html'];
-    }
-  });
+  if(document.cookie.includes('teacher')){
+    var server_data = [
+      {"codeID": window.location.href.split('/code/')[1]},
+      {"lessonID": document.getElementById('lessonIDStorage').value}
+    ];
+    $.ajax({
+      type: "POST",
+      url: "/unlink-lesson",
+      data: JSON.stringify(server_data),
+      contentType: "application/json",
+      dataType: 'json',
+      success: function(result){
+        document.getElementById('isLesson').style.display = 'none';
+        document.getElementById('isLesson2').style.display = 'none';
+        document.getElementById('newLessonForm').style.display = 'inline-block';
+        document.getElementById('htmlTitle').textContent = result['title']
+        document.getElementById('htmlContent').innerHTML = result['html'];
+      }
+    });
+  }
 }
 
 window.onresize = resizeOutput;

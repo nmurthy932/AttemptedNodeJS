@@ -49,3 +49,7 @@ h1 a:hover{
     padding-right: 0px;
     float: right;
 }
+
+#btngroup{
+    padding: 0px;
+}

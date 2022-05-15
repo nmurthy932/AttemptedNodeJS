@@ -1,10 +1,6 @@
 import subprocess
 from flask import Flask, redirect, render_template, url_for, request, jsonify, abort, make_response
-import re
 import logging
-import random
-import datetime
-import string
 from encrypt import *
 from database import *
 from helperFunctions import *
@@ -19,15 +15,22 @@ app = Flask(
 	static_folder='static'
 )
 
-create_tables()
+@app.before_first_request
+def beforeFirstRequest():
+  create_tables()
 
 @app.before_request
 def ensure_login():
   routes = ['redirect_home','render_home','login','register','static']
+  teacherRoutes = ['unlinkLesson','linkLesson','deleteLesson','updateLesson','render_lesson_edit']
   cookie = request.cookies.get('user')
   user = False
   if cookie and 'None' not in cookie:
     user = check_email(cookie)
+    if not check_role(cookie) and request.endpoint in teacherRoutes:
+      resp = make_response(redirect(url_for('render_home')))
+      resp.set_cookie('user',getCookieEmail()+'|'+encryptEmail(getCookieEmail())+'|'+'student'+'|'+encryptRole('student'))
+      return resp
   if request.endpoint not in routes and not user:
     resp = make_response(redirect(url_for('login')))
     resp.set_cookie('user','None')
@@ -49,7 +52,7 @@ def login():
     password = request.form['password']
     if checkLogin(email, password):
       resp = make_response(redirect(url_for('render_home')))
-      resp.set_cookie('user',email+'|'+encryptEmail(email), max_age=60*60*24*3)
+      resp.set_cookie('user',email+'|'+encryptEmail(email)+'|'+getRole(email)+'|'+encryptRole(getRole(email)), max_age=60*60*24*3)
       return resp
     else:
       return render_template('login.html', error='Invalid email or password', email=email)
@@ -67,21 +70,24 @@ def logout():
 @app.route('/register',methods=['POST','GET'])
 def register():
   if request.method == 'POST':
+    role = request.form['role']
     email = request.form['email']
     password = request.form['password']
     firstName = request.form['firstName']
     lastName = request.form['lastName']
-    return create_password(email, firstName, lastName, password)
+    return create_password(email, firstName, lastName, password, role)
   else:
     return render_template("register.html")
+
+##Logged in routes
 
 @app.route('/code',methods=['POST','GET'], strict_slashes=False)
 def codeHome():
   if request.method == 'GET':
     with get_connection() as con:
       cursor = con.cursor()
-      projects = cursor.execute('SELECT * FROM nodejs ORDER BY created DESC').fetchall()
-      return render_template('codeHome.html', projects=projects)
+      projects = cursor.execute('SELECT * FROM nodejs WHERE email=? ORDER BY created DESC',[getCookieEmail(),]).fetchall()
+      return render_template('codeHome.html', projects=projects, role=getRole(getCookieEmail()))
   else:
     if request.form['submit'] == 'Create New Linked Code Document':
       return newCodeDocument(request.form['id'])
@@ -101,14 +107,13 @@ def render_code(id):
   else:
     with get_connection() as con:
       cursor = con.cursor()
-      ##TODO: WHAT IF THERE ARE MULTIPLE LINKED LESSONS TO ONE CODE DOCUMENT
       lessons = cursor.execute('SELECT * FROM lessons WHERE linked=? ORDER BY created DESC',['False',]).fetchall()
       html = render_template('lessonSelect.html',lessons=lessons)
       title = 'Choose a lesson to link'
       isLesson = ''
   if request.method == 'GET':
     logging.info("*** Form displayed using GET ***")
-    return render_template('code.html',name=name,id=id,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson)
+    return render_template('code.html',name=name,id=id,code=nodeCode,markdownString=markdownString,errors='noerror',html=html,title=title,isLesson=isLesson,role=getRole(getCookieEmail()))
   else:
     return write_compile(str(request.form['code']), name, markdownString, id, html, title, isLesson)
 
@@ -118,11 +123,13 @@ def lessonHome():
     with get_connection() as con:
       cursor = con.cursor()
       lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
-      return render_template('lessonHome.html',lessons=lessons)
-  else:
+      return render_template('lessonHome.html',lessons=lessons,role=getRole(getCookieEmail()))
+  elif check_role(request.cookies.get('user')):
     if request.form['submit'] == 'Create New Linked Lesson':
       return newLesson(request.form['id'])
     return newLesson()
+  else:
+    return redirect(url_for('render_home'))
 
 @app.route('/lessons/<id>',strict_slashes=False)
 def redirect_lesson(id):
@@ -142,7 +149,7 @@ def render_lesson(id):
   else:
     codeLink = None
   if request.method == 'GET':
-    return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'],codeID=codeLink,lessonID=id)
+    return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'],codeID=codeLink,lessonID=id,role=getRole(getCookieEmail()))
 
 @app.route('/lessons/<id>/edit',methods=['POST','GET'],strict_slashes=False)
 def render_lesson_edit(id):
@@ -150,7 +157,7 @@ def render_lesson_edit(id):
   if request.method == "GET":
     with get_connection() as con:
       cursor = con.cursor()
-      linkedCode = cursor.execute('SELECT docID FROM nodejs WHERE linkedLesson=?', [id,]).fetchall()
+      linkedCode = cursor.execute('SELECT docID FROM nodejs WHERE linkedLesson=? AND email=?', [id,getCookieEmail(),]).fetchall()
       if linkedCode != []:
         linkedCode = linkedCode[0]['docID']
         html = ''
@@ -177,8 +184,9 @@ def udpateCode():
       con.commit()
       cursor.execute('UPDATE nodejs SET name=? WHERE docID=?', [data[0]['Name'], data[1]['docID'],])
       con.commit()
-      cursor.execute('UPDATE nodejs SET markdown=? WHERE docID=?', [data[3]['markdown'], data[1]['docID'],])
-      con.commit()
+      if getRole(getCookieEmail()):
+        cursor.execute('UPDATE nodejs SET markdown=? WHERE docID=?', [data[3]['markdown'], data[1]['docID'],])
+        con.commit()
     results = {'processed': 'true'}
     return jsonify(results)
   else:
@@ -190,14 +198,17 @@ def deleteDoc():
     data = request.get_json()
     with get_connection() as con:
       cursor = con.cursor()
-      linkedLesson = cursor.execute('SELECT linkedLesson FROM nodejs WHERE docID=?',[data[0]['docID'],]).fetchall()
-      if linkedLesson != []:
-        linkedLesson = linkedLesson[0]['linkedLesson']
-        cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['False',linkedLesson,])
-      cursor.execute('DELETE FROM nodejs WHERE docID=?', [data[0]['docID'],])
-      con.commit()
-    results = {'processed': 'true'}
-    return jsonify(results)
+      email = cursor.execute('SELECT email FROM nodejs WHERE docID=?',[data[0]['docID'],]).fetchall()
+      if email != [] and email[0]['email'] == getCookieEmail():
+        linkedLesson = cursor.execute('SELECT linkedLesson FROM nodejs WHERE docID=?',[data[0]['docID'],]).fetchall()
+        if linkedLesson != []:
+          linkedLesson = linkedLesson[0]['linkedLesson']
+          cursor.execute('UPDATE lessons SET linked=? WHERE docID=?',['False',linkedLesson,])
+        cursor.execute('DELETE FROM nodejs WHERE docID=?', [data[0]['docID'],])
+        con.commit()
+        results = {'processed': 'true'}
+        return jsonify(results)
+      return redirect(url_for('render_home'))
   else:
     return redirect(url_for('render_home'))
 
