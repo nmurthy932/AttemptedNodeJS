@@ -49,7 +49,7 @@ def login():
     password = request.form['password']
     if checkLogin(email, password):
       resp = make_response(redirect(url_for('render_home')))
-      resp.set_cookie('user',email+'|'+encryptEmail(email))
+      resp.set_cookie('user',email+'|'+encryptEmail(email), max_age=60*60*24*3)
       return resp
     else:
       return render_template('login.html', error='Invalid email or password', email=email)
@@ -61,7 +61,7 @@ def login():
 @app.route('/logout',methods=['POST','GET'])
 def logout():
   resp = make_response(redirect(url_for('render_home')))
-  resp.set_cookie('user','None')
+  resp.set_cookie('user','None',max_age=0)
   return resp
 
 @app.route('/register',methods=['POST','GET'])
