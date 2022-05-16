@@ -5,9 +5,11 @@
 <div id="body">
   <div id="header">
     <h1 class="text-center">Lessons</h1>
+    {% if role == "teacher" %}
     <form action="" method="post" class="d-flex justify-content-center">
-      <input type="submit" value="Create New Lesson">
+      <input type="submit" name="submit" value="Create New Lesson">
     </form>
+    {% endif %}
   </div>
   <div id="content">
     <table class="d-flex justify-content-evenly">
@@ -21,7 +23,9 @@
           <td><a href="/lessons/{{things['docID']}}/view" id="url">{{things['title']}}</a></td>
           <td>{{things['email']}}</td>
           <td>{{things['created'][:11]}}</td>
+          {% if role == "teacher" %}
           <td><a href="/lessons/{{things['docID']}}/edit"><button type="button">Edit</button></a></td>
+          {% endif %}
         </tr>
       {% endfor %}
     </table>

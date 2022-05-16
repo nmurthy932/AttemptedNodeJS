@@ -15,6 +15,22 @@
             <a href="/lessons">Back to lessons</a>
             <input id="lessonName" type="text" class="" value="{{title}}" onchange="save()" placeholder="Untitled lesson">
             <p id="save">Saved</p>
+            <div class="form-check form-switch" id="publishedForm">
+                {% if published == 1 %}
+                <input type="checkbox" role="switch" class="form-check-input" id="published" onclick="publish()" checked>
+                <label class="form-check-label" for="published">Published</label>
+                {% else %}
+                <input type="checkbox" role="switch" class="form-check-input" id="published" onclick="publish()">
+                <label class="form-check-label" for="published">Unpublished</label>
+                {% endif %}
+            </div>
+            <button><a href="/lessons/{{lessonID}}/view">View Lesson</a></button>
+            {% if codeID != None %}
+            <button type="button"><a href="/code/{{codeID}}">Linked Code</a></button>
+            <button type="button" id="{{codeID}}" onclick="removeSelectedLesson(this.id)">Unlink Code</button>
+            {% else %}
+            <button id="lesson" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLeft">Link Code</button>
+            {% endif %}
             <button type="button" data-bs-toggle="modal" data-bs-target="#verificationModal">Delete</button>
             <div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verififcationModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -46,6 +62,24 @@
         </div>
     </div>
 </div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasLeft" data-bs-scroll="true" data-bs-backdrop="false">
+    <div class="offcanvas-header" id="selectHeader">
+      <div class="d-flex align-items-center">
+        <h1 id="htmlTitle" class="text-center">{{name}}</h1>
+      </div>
+        <form action="/code" method="post" class="d-flex justify-content-center" id="newLessonForm">
+            <input type="input" value="{{lessonID}}" name="id" style="display: none;">
+            <input type="submit" name="submit" value="Create New Linked Code Document">
+        </form>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div id="html">
+      <div id="htmlContent">
+          {{html|safe}}
+      </div>
+    </div>
+  </div>
 {% endblock %}
 {% block scripts %}
 <script src="/static/javascript/lessonEditorScript.js"></script>

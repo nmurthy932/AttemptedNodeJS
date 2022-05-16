@@ -16,6 +16,10 @@
     width: 50px;
 }
 
+#publishedForm{
+  width: 75px;
+}
+
 textarea{
     width: 90%;
     height: 100%;
@@ -30,9 +34,6 @@ textarea{
     color: white;
     background: black;
   }
-  
-.CodeMirror-cursor{
-}
 
 .CodeMirror-scroll{
     background-color: #2E294E;
@@ -51,3 +52,57 @@ textarea{
     width: 100%;
     height: 100%;
 }
+
+/* codeSelect stuff */
+
+.offcanvas.offcanvas-end{
+    width: 100%;
+    top: 6%;
+    height: 94%;
+  }
+  
+  #html{
+    color: #3FDE74;
+    background-color: #101A3F;
+    height: 100%;
+  }
+  
+  #header{
+    height: 10%;
+  }
+  
+  #header h1{
+    text-align: center;
+  }
+  
+  #htmlContent{
+    color: #3FDE74;
+    background-color: #2E294E;
+    height: 90%;
+    overflow: auto;
+  }
+    
+  #selectHtmlContent td, #selectHtmlContent th{
+    padding: 10px;
+    color: #3FDE74;
+  }
+  
+  #selectBody{
+    background-color: #101A3F;
+    color: #3FDE74;
+    height: 100%;
+  }
+  
+  #selectHeader{
+    background-color: #101A3F;
+    color: #3FDE74;
+    height: 10%;
+  }
+  
+  #selectHtmlContent{
+    padding: 10px;
+    background-color: #2E294E;
+    color: #3FDE74;
+    height: 100%;
+    overflow: auto;
+  }

@@ -16,26 +16,52 @@
       <div id="actions" class="col-12 d-flex justify-content-evenly align-items-center">
         <a href="/code">Back to code</a>
         <input id="docName" value="{{name}}" placeholder="Untitled document" onchange="save()">
-        <button type="button" class="btn btn-primary" onclick="runCode()">Run</button>
+        <button type="button" class="btn btn-primary btn-lg" onclick="runCode()">Run</button>
+        {% if role == "teacher" %}
+        <div class="form-check form-switch" id="publishedForm">
+          {% if published == 1 %}
+          <input type="checkbox" role="switch" class="form-check-input" id="published" onclick="publish()" checked>
+          <label class="form-check-label" for="published">Published</label>
+          {% else %}
+          <input type="checkbox" role="switch" class="form-check-input" id="published" onclick="publish()">
+          <label class="form-check-label" for="published">Unpublished</label>
+          {% endif %}
+        </div>
+        {% endif %}
         <p id="save">Saved</p>
       </div>
-      <div id="content" class="row d-flex justify-content-evenly">
+      <div id="content" class="row d-flex justify-content-between">
+        <ul class="nav flex-column col-1" id="sidebarMenu">
+          <li class="nav-item">
+            <a class="nav-link active">
+              {% if role == "teacher" or isLesson != '' %}
+              <button class="btn btn-outline-primary" id="lesson" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLeft">Lesson</button>
+              {% elif role == "student" %}
+              <button class="btn btn-outline-primary" id="lesson" type="button" disabled>Lesson</button>
+              {% endif %}
+            </a>
+          </li>
+        </ul>
         <div id="leftSide" class="col-6">
           <ul class="nav nav-tabs">
             <li class="nav-item">
               <button class="nav-link active" id="inputTab" onclick="switchTab('input')">Node.js</button>
             </li>
+            {% if role == "teacher" %}
             <li class="nav-item">
               <button class="nav-link" id="markdownEditTab" onclick="switchTab('markdownEdit')">Edit Markdown</button>
             </li>
+            {% endif %}
           </ul>
           <div id="input">
             <form method="post" class="row g-3" id="codeForm">
               <textarea id="code" name="code" class="CodeMirror" placeholder="Enter code here" oninput="save()">{{code}}</textarea><br>
             </form>
+            {% if role == "teacher" %}
             <form method="post" class="row g-3" id="markdownForm">
               <textarea id="mkdown" class="CodeMirror" placeholder="Enter markdown code here" oninput="save()">{{markdownString}}</textarea>
             </form>
+            {% endif %}
           </div>
         </div>
         <div id="rightSide" class="col-5">
@@ -63,6 +89,37 @@
             </script>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+<!--Offcanvas Stuff-->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasLeft" data-bs-scroll="true" data-bs-backdrop="false">
+    <div class="offcanvas-header" id="selectHeader">
+      <div class="d-flex align-items-center">
+        <h1 id="htmlTitle" class="text-center">{{title}}</h1>
+      </div>
+      <button type="button"><a href="/lessons/{{isLesson}}/view">View Lesson</a></button>
+      {% if isLesson != '' and role == "teacher" %}
+        <button type="button" id="isLesson" onclick="removeSelectedLesson()">Unlink Lesson</button>
+        <button type="button" id="isLesson2"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
+        <form action="/lessons" method="post" id="newLessonForm" style="display: none;">
+          <input type="input" id="lessonIDStorage" value="{{id}}" name="id" style="display: none;">
+          <input type="submit" name="submit" value="Create New Linked Lesson">
+        </form>
+      {% elif role == "teacher" %}
+        <button type="button" id="isLesson" style="display: none;" onclick="removeSelectedLesson()">Unlink Lesson</button>
+        <button type="button" id="isLesson2" style="display: none;"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
+        <form action="/lessons" method="post" id="newLessonForm">
+          <input type="input" id="lessonIDStorage" value="{{id}}" name="id" style="display: none;">
+          <input type="submit" name="submit" value="Create New Linked Lesson">
+        </form>
+      {% endif %}
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div id="html">
+      <div id="htmlContent">
+          {{html|safe}}
       </div>
     </div>
   </div>

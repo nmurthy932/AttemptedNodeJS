@@ -5,14 +5,18 @@
 #body{
   padding: 0px;
   height: 100%;
+  margin: 0px;
+  background-color: #101A3F;
 }
 
 #content{
-  height: 95%;
+  height: 93%;
+  padding: 0px;
 }
 
 #leftSide, #rightSide{
   height: 100%;
+  padding: 10px;
 }
 
 #input form{
@@ -41,7 +45,6 @@
 #runcode{
   width: 100%;
   margin: 0px;
-  background-color: #101A3F;
   color: #3FDE74;
   height: 100%;
 }
@@ -63,12 +66,16 @@
 #actions{
   text-align: center;
   background-color: #eef;
-  height: 5%;
+  height: 7%;
   color: black;
 }
 
 #actions p{
   width: 50px;
+}
+
+#publishedForm{
+  width: 75px;
 }
 
 #save{
@@ -77,4 +84,64 @@
 
 .CodeMirror-scroll{
   background-color: #2E294E;
+}
+
+#sidebarMenu{
+  background-color: white;
+  height: 100%;
+}
+
+.offcanvas.offcanvas-end{
+  width: 92%;
+  left: 8%;
+  height: 93%;
+  top: 7%;
+}
+
+#html{
+  color: #3FDE74;
+  background-color: #101A3F;
+  height: 100%;
+}
+
+#header{
+  height: 10%;
+}
+
+#header h1{
+  text-align: center;
+}
+
+#htmlContent{
+  color: #3FDE74;
+  background-color: #2E294E;
+  height: 90%;
+  overflow: auto;
+}
+
+/* Styling for lessonSelect */
+
+#selectHtmlContent td, #selectHtmlContent th{
+  padding: 10px;
+  color: #3FDE74;
+}
+
+#selectBody{
+  background-color: #101A3F;
+  color: #3FDE74;
+  height: 100%;
+}
+
+#selectHeader{
+  background-color: #101A3F;
+  color: #3FDE74;
+  height: 10%;
+}
+
+#selectHtmlContent{
+  padding: 10px;
+  background-color: #2E294E;
+  color: #3FDE74;
+  height: 100%;
+  overflow: auto;
 }

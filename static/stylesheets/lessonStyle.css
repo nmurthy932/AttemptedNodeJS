@@ -4,11 +4,11 @@
     height: 100%;
 }
 
-#header{
+.offcanvas-header{
     height: 10%;
 }
 
-#header h1{
+.offcanvas-header h1{
     text-align: center;
 }
 
