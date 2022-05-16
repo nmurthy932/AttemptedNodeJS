@@ -89,6 +89,7 @@
 #sidebarMenu{
   background-color: white;
   height: 100%;
+  text-align: center;
 }
 
 .offcanvas.offcanvas-end{
@@ -117,6 +118,14 @@
   background-color: #2E294E;
   height: 90%;
   overflow: auto;
+  padding: 20px;
+}
+
+#htmlContent pre{
+  background-color: dimgray;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 10px;
 }
 
 /* Styling for lessonSelect */

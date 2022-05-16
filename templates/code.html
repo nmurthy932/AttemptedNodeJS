@@ -99,8 +99,8 @@
       <div class="d-flex align-items-center">
         <h1 id="htmlTitle" class="text-center">{{title}}</h1>
       </div>
-      <button type="button"><a href="/lessons/{{isLesson}}/view">View Lesson</a></button>
       {% if isLesson != '' and role == "teacher" %}
+        <button type="button" id="viewLesson"><a href="/lessons/{{isLesson}}/view">View Lesson</a></button>
         <button type="button" id="isLesson" onclick="removeSelectedLesson()">Unlink Lesson</button>
         <button type="button" id="isLesson2"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
         <form action="/lessons" method="post" id="newLessonForm" style="display: none;">
@@ -108,6 +108,7 @@
           <input type="submit" name="submit" value="Create New Linked Lesson">
         </form>
       {% elif role == "teacher" %}
+        <button type="button" style="display: none;" id="viewLesson"><a href="/lessons/{{isLesson}}/view">View Lesson</a></button>
         <button type="button" id="isLesson" style="display: none;" onclick="removeSelectedLesson()">Unlink Lesson</button>
         <button type="button" id="isLesson2" style="display: none;"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
         <form action="/lessons" method="post" id="newLessonForm">

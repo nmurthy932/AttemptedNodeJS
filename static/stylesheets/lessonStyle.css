@@ -17,4 +17,12 @@
     background-color: #2E294E;
     height: 90%;
     overflow: auto;
+    padding: 20px;
+}
+
+pre{
+    background-color: dimgray;
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 10px;
 }
