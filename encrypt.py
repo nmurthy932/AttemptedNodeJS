@@ -36,9 +36,7 @@ def check_email(encrypted):
 
 def check_role(encrypted):
   encrypted = encrypted.split('|')
-  if len(encrypted) > 1:
-    email = encrypted[0]
-    hash = encrypted[1]
+  if len(encrypted) > 3:
     role = encrypted[2]
     roleHash = encrypted[3]
     if encryptRole(role) == roleHash and role == 'teacher':

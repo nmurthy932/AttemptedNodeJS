@@ -1,4 +1,3 @@
-import subprocess
 from flask import Flask, redirect, render_template, url_for, request, jsonify, abort, make_response
 import logging
 from encrypt import *
@@ -163,8 +162,10 @@ def render_lesson(id):
         codeLink = None
   else:
     codeLink = None
-  if request.method == 'GET' and lessonPage['published'] == 1:
+  if request.method == 'GET' and (lessonPage['published'] == 1 or check_role(request.cookies.get('user'))):
     return render_template('lesson.html',title=lessonPage['title'],html=lessonPage['content'],codeID=codeLink,lessonID=id,role=getRole(getCookieEmail()),permissions=permissions)
+  else:
+    return redirect(url_for('render_home'))
 
 @app.route('/lessons/<id>/edit',methods=['POST','GET'],strict_slashes=False)
 def render_lesson_edit(id):
