@@ -139,6 +139,7 @@ function setSelectedLesson(id){
       dataType: 'json',
       success: function(result){
         console.log(id);
+        document.getElementById('viewLesson').style.display = 'inline-block';
         document.getElementById('isLesson').style.display = 'inline-block';
         document.getElementById('isLesson2').style.display = 'inline-block';
         document.getElementById('newLessonForm').style.display = 'none';
@@ -163,6 +164,7 @@ function removeSelectedLesson(){
       contentType: "application/json",
       dataType: 'json',
       success: function(result){
+        document.getElementById('viewLesson').style.display = 'none';
         document.getElementById('isLesson').style.display = 'none';
         document.getElementById('isLesson2').style.display = 'none';
         document.getElementById('newLessonForm').style.display = 'inline-block';

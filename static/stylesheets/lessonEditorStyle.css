@@ -51,6 +51,14 @@ textarea{
     overflow: auto;
     width: 100%;
     height: 100%;
+    padding: 20px;
+}
+
+#content pre{
+  background-color: dimgray;
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 10px;
 }
 
 /* codeSelect stuff */
