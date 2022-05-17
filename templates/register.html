@@ -3,6 +3,19 @@
 {% block stylesheet %}register.css{% endblock %}
 {% block body %}
 {% if success == True %}
+<div id="body" class="d-flex align-items-center">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <h1 class="display-1 text-center"><a href="/home">Ln</a></h1>
+      </div>
+      <div class="row justify-content-center">
+        <p>Thank you for creating an account. You can now <a href="/login">login</a>.</p>
+      </div>
+      <div class="row justify-content-center">
+        <a><button class="btn btn-outline-primary" style="width: 30%">Login</button></a>
+      </div>
+    </div>
+  </div>
 <p>Your account has been created. You may now login</p>
 {% else %}
 <div class="d-flex" id="registerDiv">
