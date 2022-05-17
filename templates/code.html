@@ -104,7 +104,8 @@
         <button type="button" id="isLesson" onclick="removeSelectedLesson()">Unlink Lesson</button>
         <button type="button" id="isLesson2"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
         <form action="/lessons" method="post" id="newLessonForm" style="display: none;">
-          <input type="input" id="lessonIDStorage" value="{{id}}" name="id" style="display: none;">
+          <input type="input" id="codeID" value="{{id}}" name="id" style="display: none;">
+          <input type="input" id="lessonID" value="{{isLesson}}" name="id" style="display: none;">
           <input type="submit" name="submit" value="Create New Linked Lesson">
         </form>
       {% elif role == "teacher" %}
@@ -112,7 +113,8 @@
         <button type="button" id="isLesson" style="display: none;" onclick="removeSelectedLesson()">Unlink Lesson</button>
         <button type="button" id="isLesson2" style="display: none;"><a href="/lessons/{{isLesson}}/edit">Edit Lesson</a></button>
         <form action="/lessons" method="post" id="newLessonForm">
-          <input type="input" id="lessonIDStorage" value="{{id}}" name="id" style="display: none;">
+          <input type="input" id="codeID" value="{{id}}" name="id" style="display: none;">
+          <input type="input" id="lessonID" value="{{isLesson}}" name="id" style="display: none;">
           <input type="submit" name="submit" value="Create New Linked Lesson">
         </form>
       {% endif %}

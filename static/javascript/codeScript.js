@@ -138,7 +138,7 @@ function setSelectedLesson(id){
       contentType: "application/json",
       dataType: 'json',
       success: function(result){
-        console.log(id);
+        document.getElementById('lessonID').value = id;
         document.getElementById('viewLesson').style.display = 'inline-block';
         document.getElementById('isLesson').style.display = 'inline-block';
         document.getElementById('isLesson2').style.display = 'inline-block';
@@ -155,7 +155,7 @@ function removeSelectedLesson(){
   if(document.cookie.includes('teacher')){
     var server_data = [
       {"codeID": window.location.href.split('/code/')[1]},
-      {"lessonID": document.getElementById('lessonIDStorage').value}
+      {"lessonID": document.getElementById('lessonID').value}
     ];
     $.ajax({
       type: "POST",
