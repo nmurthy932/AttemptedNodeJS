@@ -1,1 +1,1 @@
-this is code, you know
+console.log('Hello')

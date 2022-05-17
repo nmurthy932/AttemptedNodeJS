@@ -42,7 +42,7 @@ def redirect_home():
 @app.route('/home', methods=['POST','GET'], strict_slashes=False)
 def render_home():
   ##create_tables()
-  return render_template('home.html')
+  return render_template('home.html',role=getRole(getCookieEmail()))
 
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -58,7 +58,7 @@ def login():
   else:
     if request.cookies.get('user') != None and check_email(request.cookies.get('user')):
       return redirect(url_for('render_home'))
-    return render_template('login.html')
+    return render_template('login.html',role=getRole(getCookieEmail()))
 
 @app.route('/logout',methods=['POST','GET'])
 def logout():
@@ -78,7 +78,7 @@ def register():
   else:
     if request.cookies.get('user') != None and check_email(request.cookies.get('user')):
       return redirect(url_for('render_home'))
-    return render_template("register.html")
+    return render_template("register.html",role=getRole(getCookieEmail()))
 
 ##Logged in routes
 

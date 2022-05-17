@@ -117,6 +117,8 @@
           <input type="input" id="lessonID" value="{{isLesson}}" name="id" style="display: none;">
           <input type="submit" name="submit" value="Create New Linked Lesson">
         </form>
+      {% else %}
+        <button type="button" id="viewLesson"><a href="/lessons/{{isLesson}}/view">View Lesson</a></button>
       {% endif %}
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
