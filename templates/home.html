@@ -2,10 +2,20 @@
 {% block title %}Home{{super()}}{% endblock %}
 {% block stylesheet %}homeStyle.css{% endblock %}
 {% block body %}
-  <div>
-    <h1>LASAnode</h1>
-    <a href="/lessons">Learn something</a>
+<div id="center" class="d-flex align-items-center">
+  <div class="container-fluid">
+    <div class="row justify-content-center" id="logo">
+      <h1 class="display-1 text-center">LASAnode</h1>
+    </div>
+
+    <div class="cnt row"> 
+      <div class="d-grid gap-3 col-6 mx-auto">
+        <button class="btn btn-success" type="button"><a href="/lessons">Lessons</a></button>
+        <button class="btn btn-success" type="button"><a href="/code">Code</a></button>
+      </div>
+    </div>
   </div>
+</div>
 {% endblock %}
 {% block scripts %}
 <script src="/static/javascript/homeScript.js"></script>

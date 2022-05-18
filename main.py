@@ -42,7 +42,7 @@ def redirect_home():
 @app.route('/home', methods=['POST','GET'], strict_slashes=False)
 def render_home():
   ##create_tables()
-  return render_template('home.html')
+  return render_template('home.html',role=getRole(getCookieEmail()))
 
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -58,7 +58,7 @@ def login():
   else:
     if request.cookies.get('user') != None and check_email(request.cookies.get('user')):
       return redirect(url_for('render_home'))
-    return render_template('login.html')
+    return render_template('login.html',role=getRole(getCookieEmail()))
 
 @app.route('/logout',methods=['POST','GET'])
 def logout():
@@ -78,7 +78,7 @@ def register():
   else:
     if request.cookies.get('user') != None and check_email(request.cookies.get('user')):
       return redirect(url_for('render_home'))
-    return render_template("register.html")
+    return render_template("register.html",role=getRole(getCookieEmail()))
 
 ##Logged in routes
 
@@ -115,7 +115,7 @@ def render_code(id):
   else:
     with get_connection() as con:
       cursor = con.cursor()
-      lessons = cursor.execute('SELECT * FROM lessons WHERE linked=? ORDER BY created DESC',['False',]).fetchall()
+      lessons = cursor.execute('SELECT * FROM lessons WHERE linked=? AND email=? ORDER BY created DESC',['False',getCookieEmail(),]).fetchall()
       html = render_template('lessonSelect.html',lessons=lessons, role=getRole(getCookieEmail()))
       title = 'Choose a lesson to link'
       isLesson = ''
@@ -182,7 +182,7 @@ def render_lesson_edit(id):
         name = ''
       else:
         linkedCode = None
-        projects = cursor.execute('SELECT * FROM nodejs WHERE linkedLesson=? ORDER BY created DESC',['',]).fetchall()
+        projects = cursor.execute('SELECT * FROM nodejs WHERE linkedLesson=? AND email=? ORDER BY created DESC',['',getCookieEmail(),]).fetchall()
         html = render_template('codeSelect.html',projects=projects, role=getRole(getCookieEmail()))
         name = 'Choose a lesson to link'
       return render_template('lessonEditor.html',title=lessonPage['title'],content=lessonPage['content'],codeID=linkedCode,html=html,name=name,lessonID=id,published=lessonPage['published'])
@@ -302,8 +302,8 @@ def unlinkLesson():
       con.commit()
       cursor.execute('UPDATE nodejs SET linkedLesson=? WHERE docID=?',['', data[0]['codeID'],])
       con.commit()
-      lessons = cursor.execute('SELECT * FROM lessons ORDER BY created DESC').fetchall()
-      html = render_template('lessonSelect.html',lessons=lessons)
+      lessons = cursor.execute('SELECT * FROM lessons WHERE linked=? AND email=? ORDER BY created DESC',['False',getCookieEmail(),]).fetchall()
+      html = render_template('lessonSelect.html',lessons=lessons,role=getRole(getCookieEmail()))
       title = 'Choose a lesson to link'
       isLesson = ''
       results = {'title': title, 'html': html, 'isLesson': isLesson}

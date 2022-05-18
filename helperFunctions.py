@@ -166,7 +166,7 @@ def getRole(email):
     if role != []:
       return role[0]['role']
     else:
-      return 'student'
+      return 'none'
 
 def getEmail(docID):
   with get_connection() as con:

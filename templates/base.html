@@ -14,9 +14,44 @@
       <!-- mardown-it -->
       {% endblock %}
     </header>
+
     <body>
+      <nav class="navbar navbar-expand-sm navbar-dark bg-dark" style="height: 10%">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/home" style="color: #3FDE74; border: 1px solid #3FDE74; padding: 2px;">LASAnode</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" id="homeNav" href="/home" style="color: #3FDE74">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="lessonsNav" href="/lessons" style="color: #3FDE74">Lessons</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="codeNav" href="/code" style="color: #3FDE74">Code</a>
+              </li>
+            </ul>
+            {% if role == 'none' %}
+            <a class="nav-link" id="loginNav" href="/login" style="color: #3FDE74">Login</a>
+            <a class="nav-link" id="registerNav" href="/register" style="color: #3FDE74">Register</a>
+            {% else %}
+            <a class="nav-link" id="logoutNav" href="/logout" style="color: #3FDE74">Log Out</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+      <style>
+        .nav-item, .nav-link{
+            text-align: right;
+        }
+      </style>
+      <div style="height: 90%;">
       {% block body %}
       {% endblock %}
+      </div>
     </body>
     {% block scripts %}
     {% endblock %}

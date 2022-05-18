@@ -20,7 +20,7 @@
 }
 
 #input form{
-  height: 95%;
+  height: 94%;
 }
 
 #output{
@@ -95,8 +95,8 @@
 .offcanvas.offcanvas-end{
   width: 92%;
   left: 8%;
-  height: 93%;
-  top: 7%;
+  height: 84%;
+  top: 16%;
 }
 
 #html{
