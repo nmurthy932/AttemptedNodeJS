@@ -69,12 +69,12 @@ def logout():
 @app.route('/register',methods=['POST','GET'])
 def register():
   if request.method == 'POST':
-    role = request.form['role']
+    srole = request.form['role']
     email = request.form['email']
     password = request.form['password']
     firstName = request.form['firstName']
     lastName = request.form['lastName']
-    return create_password(email, firstName, lastName, password, role)
+    return create_password(email, firstName, lastName, password, srole)
   else:
     if request.cookies.get('user') != None and check_email(request.cookies.get('user')):
       return redirect(url_for('render_home'))

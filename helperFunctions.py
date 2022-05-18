@@ -68,28 +68,28 @@ def valid_pass(password):
     ret = False
   return ret
   
-def create_password(email, firstName, lastName, password, role):
+def create_password(email, firstName, lastName, password, srole):
   if not valid_email(email):
-    return render_template('register.html',error="Invalid email",email=email, firstName=firstName, lastName=lastName,role=role)
+    return render_template('register.html',error="Invalid email",email=email, firstName=firstName, lastName=lastName,srole=srole,role="none")
   if firstName == "":
-    return render_template('register.html',error="You must enter a first name",email=email, firstName=firstName, lastName=lastName,role=role)
+    return render_template('register.html',error="You must enter a first name",email=email, firstName=firstName, lastName=lastName,srole=srole,role="none")
   if lastName == "":
-    return render_template('register.html',error="You must enter a last name",email=email, firstName=firstName, lastName=lastName,role=role)
-  if role != "student" and role != "teacher":
-    return render_template('register.html',error="You must select an existing role",email=email,firstName=firstName,lastName=lastName,role=role)
+    return render_template('register.html',error="You must enter a last name",email=email, firstName=firstName, lastName=lastName,srole=srole,role="none")
+  if srole != "student" and srole != "teacher":
+    return render_template('register.html',error="You must select an existing role",email=email,firstName=firstName,lastName=lastName,srole=srole,role="none")
   ##TODO: Add encryption here
   salt = "".join(random.choices(string.ascii_letters+string.digits, k=10))
   if password == "":
-    return render_template('register.html',error="You must enter a password",email=email, firstName=firstName, lastName=lastName,role=role)
+    return render_template('register.html',error="You must enter a password",email=email, firstName=firstName, lastName=lastName,srole=srole,role="none")
   password = hash_str(password+salt)
   created = datetime.datetime.now()
   with get_connection() as con:
     cursor = con.cursor()
     if len(cursor.execute('SELECT * FROM users WHERE email=?',[email,]).fetchall()) != 0:
-      return render_template('register.html',error="That email is already taken",email=email, firstName=firstName, lastName=lastName,role=role)
-    cursor.execute('INSERT INTO users (email, firstName, lastName, password, salt, created, role) VALUES (?, ?, ?, ?, ?, ?, ?)', [email, firstName, lastName, password, salt, created,role,])
+      return render_template('register.html',error="That email is already taken",email=email, firstName=firstName, lastName=lastName,srole=srole)
+    cursor.execute('INSERT INTO users (email, firstName, lastName, password, salt, created, role) VALUES (?, ?, ?, ?, ?, ?, ?)', [email, firstName, lastName, password, salt, created,srole,])
     con.commit()
-  return render_template('register.html',success=True)
+  return render_template('register.html',success=True,role=srole)
 
 def checkLogin(email, password):
   with get_connection() as con:
