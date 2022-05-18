@@ -34,7 +34,7 @@
                 <a class="nav-link" id="codeNav" href="/code" style="color: #3FDE74">Code</a>
               </li>
             </ul>
-            {% if role == 'none' %}
+            {% if role != 'student' and role != 'teacher' %}
             <a class="nav-link" id="loginNav" href="/login" style="color: #3FDE74">Login</a>
             <a class="nav-link" id="registerNav" href="/register" style="color: #3FDE74">Register</a>
             {% else %}
